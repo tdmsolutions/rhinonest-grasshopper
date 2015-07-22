@@ -53,9 +53,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RhinoNestForGrasshopperComponent.cs" />
+    <Compile Include="Nesting\Object\RhinoNestObjectCriterion.cs" />
+    <Compile Include="Nesting\Object\RhinoNestObjectOrientation.cs" />
+    <Compile Include="Nesting\Object\RhinoNestObjectParameters.cs" />
+    <Compile Include="Nesting\RhinoNest.cs" />
+    <Compile Include="Nesting\RhinoNestReport.cs" />
     <Compile Include="RhinoNestForGrasshopperInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Nesting\RhinoNestGlobalCriterion.cs" />
+    <Compile Include="Nesting\RhinoNestNestingParameters.cs" />
+    <Compile Include="Nesting\Sheet\RhinoNestSheet.cs" />
+    <Compile Include="Nesting\Sheet\RhinoNestSheetByCurve.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
