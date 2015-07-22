@@ -85,6 +85,24 @@
   <ItemGroup>
     <None Include="Resources\IconSheetByCurve.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconButtonDown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconButtonUp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestObjectFreedom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestParameters.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestReport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestNesting.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

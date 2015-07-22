@@ -1,6 +1,5 @@
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\bin\RhinoNestForGrasshopper.dll
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\bin\RhinoNestForGrasshopper.pdb
-C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.csprojResolveAssemblyReference.cache
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.dll
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.pdb
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.Properties.Resources.resources

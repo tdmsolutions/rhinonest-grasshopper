@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+using RhinoNestForGrasshopper.Properties;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
@@ -48,8 +49,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return Resources.IconRhinoNestNesting;
             }
         }
 

@@ -14,7 +14,7 @@ namespace RhinoNestForGrasshopper
         public RhinoNest()
             : base("RhinoNest", "Nickname",
                 "Description",
-                "Category", "Subcategory")
+               "RhinoNest", "Nesting")
         {
         }
 
@@ -23,6 +23,8 @@ namespace RhinoNestForGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+
+          //  pManager.RegisterParam();
         }
 
         /// <summary>

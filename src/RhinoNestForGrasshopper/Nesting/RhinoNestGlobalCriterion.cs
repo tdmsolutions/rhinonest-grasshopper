@@ -14,7 +14,7 @@ namespace RhinoNestForGrasshopper
         public RhinoNestGlobalCriterion()
             : base("RhinoNestGlobalCriterion", "Nickname",
                 "Description",
-                "Category", "Subcategory")
+                "RhinoNest", "Nesting")
         {
         }
 

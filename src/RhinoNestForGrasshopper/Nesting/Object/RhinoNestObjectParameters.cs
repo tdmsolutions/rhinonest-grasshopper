@@ -14,7 +14,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         public RhinoNestObjectParameters()
             : base("RhinoNestObjectParameters", "Nickname",
                 "Description",
-                "Category", "Subcategory")
+                "RhinoNest", "Nesting")
         {
         }
 
