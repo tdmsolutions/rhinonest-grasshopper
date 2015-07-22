@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Grasshopper.Kernel;
-using Rhino.Geometry;
+using RhinoNestForGrasshopper.Properties;
 
-namespace RhinoNestForGrasshopper
+namespace RhinoNestForGrasshopper.Nesting.Sheet
 {
     public class RhinoNestSheet : GH_Component
     {
@@ -12,9 +10,9 @@ namespace RhinoNestForGrasshopper
         /// Initializes a new instance of the RhinoNestSheet class.
         /// </summary>
         public RhinoNestSheet()
-            : base("RhinoNestSheet", "Nickname",
-                "Description",
-                "Category", "Subcategory")
+            : base("RhinoNestSheet", "Sheet",
+                "Define a sheet by width and height",
+                "RhinoNest", "Nesting")
         {
         }
 
@@ -23,6 +21,8 @@ namespace RhinoNestForGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddNumberParameter("Witdh", "W", "Witdh", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Height", "H", "Height", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,6 +30,7 @@ namespace RhinoNestForGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.Register_GenericParam("Sheet", "S", "Sheet Object");
         }
 
         /// <summary>
@@ -38,6 +39,18 @@ namespace RhinoNestForGrasshopper
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+          
+            double w = 0;
+            double h = 0;
+            if (!DA.GetData(0, ref h)) return;
+            if ((!DA.GetData(1, ref w))) return;
+            
+            if (h <= 0) return;
+            if (w <= 0) return;
+
+           var  sheet = new RhinoNestKernel.RhinoNestSheet(w,h);
+           DA.SetData(0, sheet);
+
         }
 
         /// <summary>
@@ -48,8 +61,7 @@ namespace RhinoNestForGrasshopper
             get
             {
                 //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
-                return null;
+                return Resources.IconSheetBySize;
             }
         }
 

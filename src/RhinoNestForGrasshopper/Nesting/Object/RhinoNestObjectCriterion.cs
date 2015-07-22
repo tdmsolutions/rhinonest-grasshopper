@@ -14,7 +14,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         public RhinoNestObjectCriterion()
             : base("RhinoNestObjectCriterion", "Nickname",
                 "Description",
-                "Category", "Subcategory")
+                "RhinoNest", "Nesting")
         {
         }
 
@@ -64,5 +64,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         {
             get { return new Guid("{ce8585a9-3a4b-4b6a-a11b-ce97fca8e695}"); }
         }
+
     }
 }
