@@ -23,6 +23,10 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddGeometryParameter("Geometry", "G", "Base Geometry", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Copies", "Cop", "Copies", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Rotation", "Rot", "Rotation", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Priority", "Pri", "Priority", GH_ParamAccess.list);
         }
 
         /// <summary>
