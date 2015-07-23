@@ -93,9 +93,49 @@ namespace RhinoNestForGrasshopper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IconRhinoNestNestingGlobalCriterion {
+            get {
+                object obj = ResourceManager.GetObject("IconRhinoNestNestingGlobalCriterion", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IconRhinoNestObject {
+            get {
+                object obj = ResourceManager.GetObject("IconRhinoNestObject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IconRhinoNestObjectCriterion {
+            get {
+                object obj = ResourceManager.GetObject("IconRhinoNestObjectCriterion", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IconRhinoNestObjectFreedom {
             get {
                 object obj = ResourceManager.GetObject("IconRhinoNestObjectFreedom", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IconRhinoNestObjectOrientation {
+            get {
+                object obj = ResourceManager.GetObject("IconRhinoNestObjectOrientation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

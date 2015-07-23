@@ -33,7 +33,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         public RhinoNestObjectOrientationComponent()
             : base("Object - Orientation", "RhinoNest - Object Orientation",
-                "Description",
+                "Define the rotation freedom",
                 "RhinoNest", "Nesting", GH_ParamAccess.item)
         {
         }
@@ -47,7 +47,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return Resources.IconRhinoNestObjectFreedom;
+                return Resources.IconRhinoNestObjectOrientation;
             }
         }
 

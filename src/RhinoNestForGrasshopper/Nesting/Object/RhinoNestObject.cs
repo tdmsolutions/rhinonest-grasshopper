@@ -5,14 +5,14 @@ using RhinoNestForGrasshopper.Properties;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
-    public class RhinoNestObjectCriterion : GH_Component
+    public class RhinoNestObject : GH_Component
     {
         /// <summary>
-        ///     Initializes a new instance of the RhinoNestObjectCriterion class.
+        ///     Initializes a new instance of the RhinoNestObjectParameters class.
         /// </summary>
-        public RhinoNestObjectCriterion()
-            : base("Object - Criterion", "Criterion",
-                "Define the criterion",
+        public RhinoNestObject()
+            : base("Object", "Object",
+                "Defines the object and paramaters",
                 "RhinoNest", "Nesting")
         {
         }
@@ -25,7 +25,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return Resources.IconRhinoNestObjectCriterion;
+                return Resources.IconRhinoNestObject;
             }
         }
 
@@ -34,7 +34,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("{ce8585a9-3a4b-4b6a-a11b-ce97fca8e695}"); }
+            get { return new Guid("{a178c667-726e-4b8d-a68a-11c0e7b55517}"); }
         }
 
         /// <summary>
@@ -42,6 +42,13 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            pManager.AddGeometryParameter("Geometry", "G", "Closed Curves", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Copies", "C", "Copies", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Priority", "P", "Priority", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Orientation", "O", "Orientation", GH_ParamAccess.item);
+                // Ha de ser un ObjectOrientation 
+            pManager.AddIntegerParameter("Criterion", "Cr", "Criterion", GH_ParamAccess.item);
+                // Ha de ser un ObjectCriterion 
         }
 
         /// <summary>
@@ -57,6 +64,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            //TODO: Implementar
         }
     }
 }

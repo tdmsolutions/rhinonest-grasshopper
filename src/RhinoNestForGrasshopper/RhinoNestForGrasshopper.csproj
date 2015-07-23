@@ -59,7 +59,7 @@
     <Compile Include="MyFirstComponent.cs" />
     <Compile Include="Nesting\Object\RhinoNestObjectCriterion.cs" />
     <Compile Include="Nesting\Object\RhinoNestObjectOrientation.cs" />
-    <Compile Include="Nesting\Object\RhinoNestObjectParameters.cs" />
+    <Compile Include="Nesting\Object\RhinoNestObject.cs" />
     <Compile Include="Nesting\RhinoNest.cs" />
     <Compile Include="Nesting\RhinoNestReport.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -103,6 +103,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\IconRhinoNestNesting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestObject.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestObjectOrientation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestObjectCriterion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IconRhinoNestNestingGlobalCriterion.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

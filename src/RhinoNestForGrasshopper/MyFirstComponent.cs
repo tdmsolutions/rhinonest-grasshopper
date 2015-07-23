@@ -326,7 +326,7 @@ namespace Nesting
   public class OrientationParameter : GH_PersistentParam<OrientationGoo>
   {
     public OrientationParameter()
-      : base("Orientation", "Orient", "Orientation data for nesting", "RhinoNest", "Nesting")
+          : base("Orientation", "Orient", "Orientation data for nesting", "Nesting", "Nesting")
     {
 
     }

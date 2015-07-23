@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using RhinoNestForGrasshopper.Properties;
 
 namespace RhinoNestForGrasshopper
 {
@@ -18,7 +19,7 @@ namespace RhinoNestForGrasshopper
             get
             {
                 //Return a 24x24 pixel bitmap to represent this GHA library.
-                return null;
+                return Resources.IconRhinoNestNesting;
             }
         }
         public override string Description
@@ -26,7 +27,7 @@ namespace RhinoNestForGrasshopper
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "";
+                return "RhinoNest for Grasshopper. Please find the source code: https://github.com/tdmsolutions";
             }
         }
         public override Guid Id
