@@ -4,3 +4,4 @@ C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestFo
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.pdb
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.Properties.Resources.resources
 C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.csproj.GenerateResource.Cache
+C:\dev\rhinonest-grasshopper\src\RhinoNestForGrasshopper\obj\Debug64\RhinoNestForGrasshopper.csprojResolveAssemblyReference.cache

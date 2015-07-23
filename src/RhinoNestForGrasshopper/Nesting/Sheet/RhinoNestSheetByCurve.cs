@@ -11,8 +11,8 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         /// Initializes a new instance of the RhinoNestSheetByCurve class.
         /// </summary>
         public RhinoNestSheetByCurve()
-            : base("RhinoNestSheetByCurve", "Sheet",
-                "Description",
+            : base("Sheet by Curve", "Sheet",
+                "Define a sheet by a curve (Bounding box)",
                 "RhinoNest", "Nesting")
         {
         }

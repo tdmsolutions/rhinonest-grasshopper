@@ -10,7 +10,7 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         /// Initializes a new instance of the RhinoNestSheet class.
         /// </summary>
         public RhinoNestSheet()
-            : base("RhinoNestSheet", "Sheet",
+            : base("Sheet", "Sheet",
                 "Define a sheet by width and height",
                 "RhinoNest", "Nesting")
         {

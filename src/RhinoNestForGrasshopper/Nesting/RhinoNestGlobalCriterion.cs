@@ -12,8 +12,8 @@ namespace RhinoNestForGrasshopper
         /// Initializes a new instance of the RhinoNestGlobalCriterion class.
         /// </summary>
         public RhinoNestGlobalCriterion()
-            : base("RhinoNestGlobalCriterion", "Nickname",
-                "Description",
+            : base("Parameters - Global Criterion", "Criterion",
+                "Define the criterion for all the objects",
                 "RhinoNest", "Nesting")
         {
         }

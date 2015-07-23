@@ -15,8 +15,8 @@ namespace RhinoNestForGrasshopper
         /// Initializes a new instance of the RhinoNestNestingParameters class.
         /// </summary>
         public RhinoNestNestingParameters()
-            : base("RhinoNestNestingParameters", "Nickname",
-                "Description",
+            : base("Parameters", "Parameters",
+                "Define the parameters for a nesting",
                  "RhinoNest", "Nesting")
         {
             _parameters = new RhinoNestKernel.RhinoNestNestingParameters();

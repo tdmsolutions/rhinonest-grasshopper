@@ -13,8 +13,8 @@ namespace RhinoNestForGrasshopper.Nesting
         /// Initializes a new instance of the RhinoNestReport class.
         /// </summary>
         public RhinoNestReport()
-            : base("RhinoNestReport", "Nickname",
-                "Description",
+            : base("Report", "Report",
+                "Show the result of a report in a friendly way",
                  "RhinoNest", "Nesting")
         {
         }

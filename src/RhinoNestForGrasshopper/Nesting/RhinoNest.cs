@@ -12,8 +12,8 @@ namespace RhinoNestForGrasshopper
         /// Initializes a new instance of the RhinoNest class.
         /// </summary>
         public RhinoNest()
-            : base("RhinoNest", "Nickname",
-                "Description",
+            : base("RhinoNest", "RhinoNest",
+                "Main component for nesting",
                "RhinoNest", "Nesting")
         {
         }
@@ -24,6 +24,7 @@ namespace RhinoNestForGrasshopper
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
 
+            //pManager.AddParameter()
           //  pManager.RegisterParam();
         }
 
@@ -32,6 +33,7 @@ namespace RhinoNestForGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+
         }
 
         /// <summary>

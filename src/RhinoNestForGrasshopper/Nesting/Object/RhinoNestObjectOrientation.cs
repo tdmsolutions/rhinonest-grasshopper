@@ -32,7 +32,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         ///     Initializes a new instance of the RhinoNestObjectOrientation class.
         /// </summary>
         public RhinoNestObjectOrientationComponent()
-            : base("RhinoNestObjectOrientation", "RhinoNest - Object Orientation",
+            : base("Object - Orientation", "RhinoNest - Object Orientation",
                 "Description",
                 "RhinoNest", "Nesting", GH_ParamAccess.item)
         {

@@ -13,7 +13,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Initializes a new instance of the RhinoNestObjectCriterion class.
         /// </summary>
         public RhinoNestObjectCriterion()
-            : base("RhinoNestObjectCriterion", "Nickname",
+            : base("Object - Criterion", "Nickname",
                 "Description",
                 "RhinoNest", "Nesting")
         {
