@@ -45,9 +45,9 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             pManager.AddGeometryParameter("Geometry", "G", "Closed Curves", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Copies", "C", "Copies", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Priority", "P", "Priority", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Orientation", "O", "Orientation", GH_ParamAccess.item);
+            pManager.AddParameter(new Orientation(),"Orientation", "O", "Orientation", GH_ParamAccess.item);
                 // Ha de ser un ObjectOrientation 
-            pManager.AddIntegerParameter("Criterion", "Cr", "Criterion", GH_ParamAccess.item);
+            pManager.AddParameter(new Criterion(),"Criterion", "Cr", "Criterion", GH_ParamAccess.item);
                 // Ha de ser un ObjectCriterion 
         }
 

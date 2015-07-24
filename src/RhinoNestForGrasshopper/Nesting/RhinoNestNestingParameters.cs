@@ -55,8 +55,7 @@ namespace RhinoNestForGrasshopper.Nesting
             pManager.AddNumberParameter("Max time", "Mt", "Max time", GH_ParamAccess.item, _parameters.TimeOut);
             pManager.AddNumberParameter("Precision", "P", "Precision", GH_ParamAccess.item,
                 _parameters.DistancePrecision);
-            pManager.AddNumberParameter("Precision", "P", "Precision", GH_ParamAccess.item,
-                _parameters.DistancePrecision);
+            pManager.AddParameter(new GCriterion(),"Global Criterion", "GC", "Global Criterion", GH_ParamAccess.item);
         }
 
         /// <summary>
