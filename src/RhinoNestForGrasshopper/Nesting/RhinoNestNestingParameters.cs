@@ -77,13 +77,14 @@ namespace RhinoNestForGrasshopper.Nesting
             double limitOfVariants = _parameters.LimitVariants;
             double timeOut = _parameters.TimeOut;
             double precision = _parameters.DistancePrecision;
-
+            GCriterionGoo _Criterion= new GCriterionGoo();
             if (DA.GetData(0, ref i2i)) _parameters.DistanceItemToItem = i2i;
             if (DA.GetData(1, ref i2s)) _parameters.DistanceItemToSheet = i2s;
             if (DA.GetData(2, ref limitOfVariants)) _parameters.LimitVariants = (int) limitOfVariants;
             if (DA.GetData(3, ref timeOut)) _parameters.TimeOut = (int) timeOut;
             if (DA.GetData(4, ref precision)) _parameters.DistancePrecision = precision;
-
+            if (DA.GetData(5, ref _Criterion)) _parameters.Criterion = _Criterion.Value.Constraint; 
+            
             DA.SetData(0, _parameters);
         }
     }

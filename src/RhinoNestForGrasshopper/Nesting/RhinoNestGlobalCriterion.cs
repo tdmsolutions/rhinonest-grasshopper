@@ -26,7 +26,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// </summary>
         /// <param name="constraint">Constraint type.</param>
         /// <param name="angle">Angle.</param>
-        private GCriter(RhinoNestKernel.GlobalNestingCriterion constraint)
+        public GCriter(RhinoNestKernel.GlobalNestingCriterion constraint)
         {
             _constraint = constraint;
         }
@@ -229,7 +229,7 @@ namespace RhinoNestForGrasshopper.Nesting
         public GCriterion()
             : base("Global Criterion", "Global Criterion", "Global Criterion data for nesting", "RhinoNest", "Nesting")
         {
-
+            SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinX));
         }
 
         protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<GCriterionGoo> values)

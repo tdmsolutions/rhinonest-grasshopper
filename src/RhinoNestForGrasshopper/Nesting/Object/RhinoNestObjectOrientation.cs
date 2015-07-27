@@ -32,6 +32,10 @@ namespace RhinoNestForGrasshopper.Nesting
             _constraint = constraint;
             _angle = angle;
         }
+        public COrientation()
+        {
+            CreateFixedOrientation();
+        }
 
         // Static creation methods.
         /// <summary>
@@ -396,7 +400,7 @@ namespace RhinoNestForGrasshopper.Nesting
         public Orientation()
             : base("Orientation", "Orient", "Orientation data for nesting", "RhinoNest", "Nesting")
         {
-
+            SetNewOrientation(COrientation.CreateFixedOrientation());
         }
 
         protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<OrientationGoo> values)
@@ -474,7 +478,7 @@ namespace RhinoNestForGrasshopper.Nesting
             return null;
         }
 
-        private void SetNewOrientation(COrientation orientation)
+        public void SetNewOrientation(COrientation orientation)
         {
             try
             {

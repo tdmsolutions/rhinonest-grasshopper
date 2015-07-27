@@ -42,8 +42,8 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Witdh", "W", "Witdh", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Height", "H", "Height", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Witdh", "W", "Witdh", GH_ParamAccess.item,100);
+            pManager.AddNumberParameter("Height", "H", "Height", GH_ParamAccess.item,100);
         }
 
         /// <summary>

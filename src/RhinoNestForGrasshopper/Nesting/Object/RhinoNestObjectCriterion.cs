@@ -231,7 +231,7 @@ namespace RhinoNestForGrasshopper.Nesting
         public Criterion()
             : base("Criterion", "Criterion", "Criterion data for nesting", "RhinoNest", "Nesting")
         {
-
+            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.GivenOrientationAsBasicOne));
         }
 
         protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<CriterionGoo> values)
