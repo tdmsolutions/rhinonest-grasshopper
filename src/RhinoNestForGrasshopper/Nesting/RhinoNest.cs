@@ -14,25 +14,28 @@ using RhinoNestKernel;
 
 namespace RhinoNestForGrasshopper.Nesting
 {
+    /// <summary>
+    /// Modification of component attributes for get a event when double click on it.
+    /// </summary>
     public class RhinoNestComponentAttributes : GH_ComponentAttributes
     {
-        //delcaration var for the spiner
+        //Delcaration var for the spiner
         private float _spinnerAngle;
         private const int SpinnerSize = 32;
         private const int SpinnerThickness = 5;
         private bool _enableSpinner;
 
         /// <summary>
-        /// constructor
+        /// Constructor
         /// </summary>
-        /// <param name="comp"> class of the owner </param>
+        /// <param name="comp"> RhinoNest: Class of the owner.</param>
         public RhinoNestComponentAttributes(RhinoNest comp)
             : base(comp)
         {
         }
 
         /// <summary>
-        /// Set for angleProcess
+        /// Set for angleProcess int
         /// </summary>
         public float AngleProcess
         {
@@ -49,8 +52,11 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        /// Event of Double Click for the left button
+        ///  Event of Double Click for the left button
         /// </summary>
+        /// <param name="sender"> GH_Canvas: is the control handles all mouse and paint event for a single loaded document.</param>
+        /// <param name="e"> GH_CanvasMouseEvent: Class used in UI events.</param>
+        /// <returns></returns>
         public override GH_ObjectResponse RespondToMouseDoubleClick(GH_Canvas sender, GH_CanvasMouseEvent e)
         {
             if (e.Button == MouseButtons.Left)
@@ -72,8 +78,11 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        /// override of the render for create the spiner over the component
+        /// Override of the render for create the spiner over the component
         /// </summary>
+        /// <param name="iCanvas"> GH_Canvas: is the control handles all mouse and paint event for a single loaded document.</param>
+        /// <param name="graphics"> Graphics: Encapsulates a GDI+ drawing surface. This class cannot be inherited.</param>
+        /// <param name="iChannel"> GH_CanvasChannel: Enumerates all the drawing channel that are handled inside the Grasshopper canvas.</param>
         protected override void Render(GH_Canvas iCanvas, Graphics graphics, GH_CanvasChannel iChannel)
         {
             if ((iChannel == GH_CanvasChannel.Objects))
@@ -102,10 +111,13 @@ namespace RhinoNestForGrasshopper.Nesting
         
     }
 
+    /// <summary>
+    /// Class of Component RhinoNest
+    /// </summary>
     public class RhinoNest : GH_Component
     {
         //declaration of var
-        private readonly List<RhinoNestObject> _buffOut = new List<RhinoNestObject>();
+        private readonly List<List<RhinoNestObject>> _buffOut = new List<List<RhinoNestObject>>();
         public RhinoNestNesting Nesting;
         private List<RhinoNestObject> _object;
         private RhinoNestKernel.RhinoNestNestingParameters _parameters;
@@ -118,11 +130,12 @@ namespace RhinoNestForGrasshopper.Nesting
         private Transform[] _objtrans;
         private RhinoNestSheet _sheets;
         private RhinoNestSheet _sheets2;
-        private int _tryies = 1;
+        private int _tryies;
         private bool _isWorking;
+        private readonly List<Guid> _mycurves = new List<Guid>();
 
         /// <summary>
-        ///     Initializes a new instance of the RhinoNest class.
+        /// Initializes a new instance of the RhinoNest class.
         /// </summary>
         public RhinoNest()
             : base("Nesting", "Nesting",
@@ -132,7 +145,7 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        ///     Provides an Icon for the component.
+        /// Provides an Icon for the component.
         /// </summary>
         protected override Bitmap Icon
         {
@@ -144,7 +157,7 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        ///     Gets the unique ID for this component. Do not change this ID after release.
+        /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
         public override Guid ComponentGuid
         {
@@ -152,7 +165,7 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        /// get and set for this var
+        /// Het and set for IsWorking boolean
         /// </summary>
         public bool IsWorking
         {
@@ -161,7 +174,7 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        /// create the Attibute for double click
+        /// Create the Attibute for double click
         /// </summary>
         public override void CreateAttributes()
         {
@@ -169,8 +182,9 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        ///     Registers all the input parameters for this component.
+        /// Registers all the input parameters for this component.
         /// </summary>
+        /// <param name="pManager">GH_InputParamManager: This class is used during Components constructions to add input parameters.</param>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("RhinoNest Object", "O", "RhinoNest Object", GH_ParamAccess.list);
@@ -180,8 +194,9 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        ///     Registers all the output parameters for this component.
+        /// Registers all the output parameters for this component.
         /// </summary>
+        /// <param name="pManager">GH_OutputParamManager: This class is used during Components constructions to add output parameters.</param>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("RhinoNest Object Nesteds", "O", "RhinoNest Object Nesteds",
@@ -191,17 +206,18 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        ///     This is the method that send again the solveInstance.
+        /// This is the method that send again the solveInstance.
         /// </summary>
+        /// <param name="doc">GH_Document: Represent a single Grasshopper document.</param>
         private void MyCallback(GH_Document doc)
         {
             ExpireSolution(false);
         }
 
         /// <summary>
-        ///     This is the method that actually does the work.
+        /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="da">IGH_DataAccess: The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess da)
         {
             // _setOutput put var to the exit
@@ -225,6 +241,15 @@ namespace RhinoNestForGrasshopper.Nesting
             //if the user does the double ckcik start getting var
             if (!IsWorking)
             {
+                //if have curves delete all
+                if (_mycurves.Count>0)
+                {
+                    foreach (Guid t in _mycurves)
+                    {
+                        RhinoDoc.ActiveDoc.Objects.Delete(t,true);
+                    }
+                    RhinoDoc.ActiveDoc.Views.Redraw();
+                }
                 //cleaning the var
                 IsWorking = true;
                 _sheets = new RhinoNestSheet();
@@ -251,14 +276,18 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <summary>
         /// Event for the procces of spiner
         /// </summary>
+        /// <param name="sender"> object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e"> RhinoNestEventArgs: Class used in events.</param>
         void Nesting_OnNestingProgressChange(object sender, RhinoNestEventArgs e)
         {
-             Grasshopper.Instances.ActiveCanvas.ScheduleRegen(5);
+             Grasshopper.Instances.ActiveCanvas.ScheduleRegen(2);
         }
 
         /// <summary>
-        /// Event of Nesting Finish, that make the process and paint the nested objects
+        ///  Event of Nesting Finish, that make the process and paint the nested objects
         /// </summary>
+        /// <param name="sender"> object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e"> RhinoNestEventArgs: Class used in events.</param>
         private void nesting_OnNestingFinish(object sender, EventArgs e)
         {
             //For the nestet objects
@@ -277,17 +306,18 @@ namespace RhinoNestForGrasshopper.Nesting
                 _objresult.Keys.CopyTo(_nestedGeometry2, 0);
                 _objresult.Values.CopyTo(_objtrans, 0);
 
-                //do the modify to every object (position and rotation)
+                //do the modify to every object (position and rotation) and add to the list of curves
                 for (int i = 0; i < _objresult.Count; i++)
                 {
                     _modifi[i] = _nestedGeometry2[i].ExternalCurve.DuplicateCurve();
                     _modifi[i].Transform(_objtrans[i]);
-                    RhinoDoc.ActiveDoc.Objects.AddCurve(_modifi[i]);
+                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddCurve(_modifi[i]));
                 }
                 //add every objject to a buffer for put ir on the output
+                _buffOut.Add( new List<RhinoNestObject>());
                 for (int i = 0; i < _objresult.Count; i++)
                 {
-                    _buffOut.Add(new RhinoNestObject(_modifi[i]));
+                    _buffOut[_tryies].Add(new RhinoNestObject(_modifi[i]));
                 }
                 //redraw all
                 RhinoDoc.ActiveDoc.Views.Redraw();
@@ -319,22 +349,26 @@ namespace RhinoNestForGrasshopper.Nesting
                 //if it can not nest all object then use again the nest with a new sheet at right of the last
                 if (_send.Count > 0)
                 {
+                    _tryies++;
                     //move the sheet it's being used
                     _sheets2.Move(_sheets2.LenX(), 0);
                     //create a var for print the new sheet
-                    var print = new Polyline(4);
-                    print.Add(new Point3d((_sheets2.LenX())*_tryies, 0, 0));
-                    print.Add(new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), 0, 0));
-                    print.Add(new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), _sheets2.LenY(), 0));
-                    print.Add(new Point3d((_sheets2.LenX())*_tryies, _sheets2.LenY(), 0));
+                    var print = new Polyline(4)
+                    {
+                        new Point3d((_sheets2.LenX())*_tryies, 0, 0),
+                        new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), 0, 0),
+                        new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), _sheets2.LenY(), 0),
+                        new Point3d((_sheets2.LenX())*_tryies, _sheets2.LenY(), 0)
+                    };
                     //we add 1 try for the next nesting
-                    _tryies++;
-                    //print the object 
-                    RhinoDoc.ActiveDoc.Objects.AddPolyline(print);
+                    
+                    //print the object and add to the list of curves 
+                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddPolyline(print));
                     RhinoDoc.ActiveDoc.Views.Redraw();
-                    //send the new nest and wait the event of finish
+                    //send the new nest and wait the event of finish and progress for spiner
                     Nesting = new RhinoNestNesting(_send, _sheets2, _parameters);
                     Nesting.OnNestingFinish += nesting_OnNestingFinish;
+                    Nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
                     Nesting.StartNesting();
                 }
                 else

@@ -28,11 +28,12 @@ namespace RhinoNestForGrasshopper.Nesting
             _constraint = constraint;
         }
 
-        // Static creation methods.
+        
         /// <summary>
-        /// Create a fixed orientation.
+        /// Set a Global criterion
         /// </summary>
-
+        /// <param name="value">GlobalNestingCriterion: Set a Global criterion option.</param>
+        /// <returns>GCriter: Collates global criterion constraints.</returns>
         public static GCriter SetCriterion(RhinoNestKernel.GlobalNestingCriterion value)
         {
             return new GCriter(value);
@@ -42,7 +43,7 @@ namespace RhinoNestForGrasshopper.Nesting
 
         #region properties
         /// <summary>
-        /// Gets the constraint type.
+        /// Gets the globalcriterion type.
         /// </summary>
         public RhinoNestKernel.GlobalNestingCriterion Constraint
         {
@@ -67,6 +68,9 @@ namespace RhinoNestForGrasshopper.Nesting
 
 
         #region properties
+        /// <summary>
+        /// if the value is Valid.
+        /// </summary>
         public override bool IsValid
         {
             get
@@ -78,6 +82,9 @@ namespace RhinoNestForGrasshopper.Nesting
                 return true;
             }
         }
+        /// <summary>
+        /// Test te angle for Validity
+        /// </summary>
         public override string IsValidWhyNot
         {
             get
@@ -89,11 +96,16 @@ namespace RhinoNestForGrasshopper.Nesting
                 return string.Empty;
             }
         }
-
+        /// <summary>
+        /// Get the TypeName.
+        /// </summary>
         public override string TypeName
         {
             get { return "Global Criterion"; }
         }
+        /// <summary>
+        /// Get TypeDecription.
+        /// </summary>
         public override string TypeDescription
         {
             get { return "Global Criterion settings for nesting"; }
@@ -101,6 +113,10 @@ namespace RhinoNestForGrasshopper.Nesting
         #endregion
 
         #region duplication
+        /// <summary>
+        /// Diplicate the value.
+        /// </summary>
+        /// <returns>IGH_Goo: Base interface for all data inside Grasshopper.</returns>
         public override IGH_Goo Duplicate()
         {
             // since Orientation is immutable, we can just share it as often as we want.
@@ -174,6 +190,11 @@ namespace RhinoNestForGrasshopper.Nesting
         #endregion
 
         #region (de)serialization
+        /// <summary>
+        /// Write the Global Criterion
+        /// </summary>
+        /// <param name="writer">GH_IO.Serialization.GH_IWriter: Provides acces to a subset of GH_Chunk methods used for writing archives.</param>
+        /// <returns>Bool: true.</returns>
         public override bool Write(GH_IO.Serialization.GH_IWriter writer)
         {
             if (Value == null)
@@ -182,6 +203,11 @@ namespace RhinoNestForGrasshopper.Nesting
             writer.SetInt32("GCriterion", (int)Value.Constraint);
             return true;
         }
+        /// <summary>
+        /// Read the global Criterion
+        /// </summary>
+        /// <param name="reader">GH_IO.Serialization.GH_IReader: Provides acces to a subset of GH_Chunk methods used for reading archives.</param>
+        /// <returns>Bool: true.</returns>
         public override bool Read(GH_IO.Serialization.GH_IReader reader)
         {
             if (!reader.ItemExists("GCriterion"))
@@ -221,16 +247,28 @@ namespace RhinoNestForGrasshopper.Nesting
             "Try Every",
             "try Every Center"
         };
+        /// <summary>
+        /// Constructor Empty
+        /// </summary>
         public GCriterion()
             : base("Global Criterion", "Global Criterion", "Global Criterion data for nesting", "RhinoNest", "Nesting")
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinX));
         }
-
+        /// <summary>
+        /// Get off this option.
+        /// </summary>
+        /// <param name="values">ref CriterionGoo list: Goo wrapper for orientation. End-Code typically doesn't concern itself with this.</param>
+        /// <returns>GH_GetterResult: Enumerates typica getter results</returns>
         protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<GCriterionGoo> values)
         {
             return GH_GetterResult.cancel;
         }
+        /// <summary>
+        /// Get off this option.
+        /// </summary>
+        /// <param name="value">ref CriterionGoo list: Goo wrapper for orientation. End-Code typically doesn't concern itself with this.</param>
+        /// <returns>GH_GetterResult: Enumerates typica getter results</returns>
         protected override GH_GetterResult Prompt_Singular(ref GCriterionGoo value)
         {
             return GH_GetterResult.cancel;
@@ -257,7 +295,9 @@ namespace RhinoNestForGrasshopper.Nesting
         {
             return new GCriterionGoo();
         }
-
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
         protected override Bitmap Icon
         {
             get
@@ -266,22 +306,31 @@ namespace RhinoNestForGrasshopper.Nesting
                 return Resources.IconRhinoNestNestingGlobalCriterion;
             }
         }
+        /// <summary>
+        /// Get for Exposure
+        /// </summary>
         public override GH_Exposure Exposure
         {
             get { return GH_Exposure.primary; }
         }
+        /// <summary>
+        /// Gets the unique ID for this component. Do not change this ID after release.
+        /// </summary>
         public override Guid ComponentGuid
         {
             get { return new Guid("{13169c9a-a200-488e-ac59-3a2667cecea7}"); }
         }
 
         #region custom menu UI
+        /// <summary>
+        /// Set a function for all option on ToolStripMenuItem.
+        /// </summary>
+        /// <returns>ToolStripMenuItem: Represent a selectable option displayed on System.Windows.Forms.MenuStrip.</returns>
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
         {
             // TODO: figure out whether one of these is already assigned as persistent data and set the check to TRUE.
 
-            System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
-            item.Text = @"Set an Criterion";
+            var item = new System.Windows.Forms.ToolStripMenuItem {Text = @"Set an Criterion"};
             Menu_AppendItem(item.DropDown, Text[0], Menu_GOp_0);
             Menu_AppendItem(item.DropDown, Text[1], Menu_GOp_1);
             Menu_AppendItem(item.DropDown, Text[2], Menu_GOp_2);
@@ -299,11 +348,18 @@ namespace RhinoNestForGrasshopper.Nesting
 
             return item;
         }
+        /// <summary>
+        /// Make imposible do a multislection
+        /// </summary>
+        /// <returns>return null</returns>
         protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
         {
             return null;
         }
-
+        /// <summary>
+        /// Select a new Globalcriterion.
+        /// </summary>
+        /// <param name="source">GCriter: Collates nesting global criterion constraints.</param>
         private void SetNewGCriter(GCriter source)
         {
             try
@@ -319,59 +375,128 @@ namespace RhinoNestForGrasshopper.Nesting
                 ExpireSolution(true);
             }
         }
-            
+        /// <summary>
+        /// Make a function for option 0 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>    
         private void Menu_GOp_0(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinX));
         }
+        /// <summary>
+        /// Make a function for option 1 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_1(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinPerimeterOfNested));
         }
+        /// <summary>
+        /// Make a function for option 2 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_2(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinSpacerOfNested));
         }
+        /// <summary>
+        /// Make a function for option 3 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_3(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MaxFreeSpace));
         }
+        /// <summary>
+        /// Make a function for option 4 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_4(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.MinLostRegions));
         }
+        /// <summary>
+        /// Make a function for option 5 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_5(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.LowerLeftPoint));
         }
+        /// <summary>
+        /// Make a function for option 6 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_6(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.LowerRightPoint));
         }
+        /// <summary>
+        /// Make a function for option 7 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_7(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.Random));
         }
+        /// <summary>
+        /// Make a function for option 8 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_8(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.CenterMinAdditionXy));
         }
+        /// <summary>
+        /// Make a function for option 9 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_9(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.CenterMinMultiplicationXy));
         }
+        /// <summary>
+        /// Make a function for option 10 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_10(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.CenterMinAdditionX2Y2));
         }
+        /// <summary>
+        /// Make a function for option 11 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_11(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.CenterMinMaxXy));
         }
+        /// <summary>
+        /// Make a function for option 12 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_12(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.TryEvery));
         }
+        /// <summary>
+        /// Make a function for option 13 from ToolStripMenu
+        /// </summary>
+        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
+        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
         private void Menu_GOp_13(object sender, EventArgs e)
         {
             SetNewGCriter(GCriter.SetCriterion(RhinoNestKernel.GlobalNestingCriterion.TryEveryCenter));

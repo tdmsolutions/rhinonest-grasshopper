@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Rhino.Geometry;
 using RhinoNestForGrasshopper.Properties;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
+    /// <summary>
+    /// Class to make a class of curves with priority, Copies,Orientation and criterion.
+    /// </summary>
     public class RhinoNestObject : GH_Component
     {
         private System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject> _parameters2 = new System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
-        private System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject> _parameters = new System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
+        private readonly System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject> _parameters = new System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
         /// <summary>
-        ///     Initializes a new instance of the RhinoNestObjectParameters class.
+        /// Initializes a new instance of the RhinoNestObjectParameters class.
         /// </summary>
         public RhinoNestObject()
             : base("Object", "Object",
@@ -21,7 +25,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         }
 
         /// <summary>
-        ///     Provides an Icon for the component.
+        /// Provides an Icon for the component.
         /// </summary>
         protected override Bitmap Icon
         {
@@ -33,7 +37,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         }
 
         /// <summary>
-        ///     Gets the unique ID for this component. Do not change this ID after release.
+        /// Gets the unique ID for this component. Do not change this ID after release.
         /// </summary>
         public override Guid ComponentGuid
         {
@@ -41,8 +45,9 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         }
 
         /// <summary>
-        ///     Registers all the input parameters for this component.
+        /// Registers all the input parameters for this component.
         /// </summary>
+        /// <param name="pManager">GH_InputParamManager: This class is used during Components constructions to add input parameters.</param>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Curve", "G", "Closed Curves", GH_ParamAccess.list);
@@ -53,29 +58,30 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             pManager.AddParameter(new Criterion(),"Criterion", "Cr", "Criterion", GH_ParamAccess.item);
                 // Ha de ser un ObjectCriterion 
         }
-        
+
         /// <summary>
-        ///     Registers all the output parameters for this component.
+        /// Registers all the input parameters for this component.
         /// </summary>
+        /// <param name="pManager">GH_OutputParamManager: This class is used during Components constructions to add Output parameters.</param>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
             pManager.Register_GenericParam("RhinoNest Object ", "O", "RhinoNest Object");
         }
 
         /// <summary>
-        ///     This is the method that actually does the work.
+        /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="da">IGH_DataAccess: The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess da)
         {
-
-            System.Collections.Generic.List<Rhino.Geometry.Curve> Object=new System.Collections.Generic.List<Rhino.Geometry.Curve>(100);
+            //Declaration.
+            var Object=new System.Collections.Generic.List<Curve>(100);
+            var orientation= new OrientationGoo();
+            var criterion = new CriterionGoo();
+            var copies = 0;
+            var priority = 0;
             
-            OrientationGoo orientation= new OrientationGoo();
-            CriterionGoo criterion = new CriterionGoo();
-            Int32 copies = 0;
-            Int32 priority = 0;
-            
+            //clear value and get the objects.
             _parameters.Clear();
             if (da.GetDataList(0, Object)) _parameters2 = new  System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
             if (da.GetData(1, ref copies)) {}
@@ -83,21 +89,26 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             if (da.GetData(3, ref orientation)) {}
             if (da.GetData(4, ref criterion)) { }
 
-            RhinoNestKernel.RhinoNestObject obj;
-            //_parameters2.Capacity=Object.Count;
-            for (int i=0; i<Object.Count;i++)
+
+            //asignament of all objects on list.
+            foreach (Curve t in Object)
             {
-                obj=new RhinoNestKernel.RhinoNestObject(Object[i]); 
-                obj.Parameters.Copies = copies;
-                obj.Parameters.Priority = priority;
-                obj.Parameters.Orientation = orientation.Value.Constraint;
-                obj.Parameters.Criterion = criterion.Value.Constraint;
-                 _parameters2.Add(obj);
+                var obj = new RhinoNestKernel.RhinoNestObject(t)
+                {
+                    Parameters =
+                    {
+                        Copies = copies,
+                        Priority = priority,
+                        Orientation = orientation.Value.Constraint,
+                        Criterion = criterion.Value.Constraint
+                    }
+                };
+                _parameters2.Add(obj);
             }
+
+            //Put the list to Output.
             _parameters.AddRange(_parameters2);
             da.SetDataList(0, _parameters);
-            //RhinoNestKernel.RhinoNestObject obj = new RhinoNestKernel.RhinoNestObject();
-            //TODO: Implementar
         }
     }
 }
