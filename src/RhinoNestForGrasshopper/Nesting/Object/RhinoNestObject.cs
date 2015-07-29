@@ -65,8 +65,8 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <summary>
         ///     This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
-        protected override void SolveInstance(IGH_DataAccess DA)
+        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        protected override void SolveInstance(IGH_DataAccess da)
         {
 
             System.Collections.Generic.List<Rhino.Geometry.Curve> Object=new System.Collections.Generic.List<Rhino.Geometry.Curve>(100);
@@ -77,11 +77,11 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             Int32 priority = 0;
             
             _parameters.Clear();
-            if (DA.GetDataList(0, Object)) _parameters2 = new  System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
-            if (DA.GetData(1, ref copies)) {}
-            if (DA.GetData(2, ref priority)){}
-            if (DA.GetData(3, ref orientation)) {}
-            if (DA.GetData(4, ref criterion)) { }
+            if (da.GetDataList(0, Object)) _parameters2 = new  System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
+            if (da.GetData(1, ref copies)) {}
+            if (da.GetData(2, ref priority)){}
+            if (da.GetData(3, ref orientation)) {}
+            if (da.GetData(4, ref criterion)) { }
 
             RhinoNestKernel.RhinoNestObject obj;
             //_parameters2.Capacity=Object.Count;
@@ -93,12 +93,9 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 obj.Parameters.Orientation = orientation.Value.Constraint;
                 obj.Parameters.Criterion = criterion.Value.Constraint;
                  _parameters2.Add(obj);
-               
             }
-
-
             _parameters.AddRange(_parameters2);
-            DA.SetDataList(0, _parameters);
+            da.SetDataList(0, _parameters);
             //RhinoNestKernel.RhinoNestObject obj = new RhinoNestKernel.RhinoNestObject();
             //TODO: Implementar
         }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using Grasshopper.Kernel;
-using Rhino.Geometry;
 using System.Drawing;
-using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
 using RhinoNestForGrasshopper.Properties;
 
-namespace RhinoNestForGrasshopper.Nesting
+namespace RhinoNestForGrasshopper.Nesting.Object
 {
     /// <summary>
     /// Collates nesting orientation constraints. 
@@ -86,14 +83,6 @@ namespace RhinoNestForGrasshopper.Nesting
             return new COrientation(RhinoNestKernel.ObjectOrientation.Positive90Negative90, 180);
         }
 
-        /// <summary>
-        /// Create an orientation for specific angles.
-        /// </summary>
-        /// <param name="angle">Angle. Negative angles indicate plus-or-minus.</param>
-        //public static Orientation CreateAngledOrientation(int angle)
-        //{
-        //    return new Orientation(Freedom.Angle, angle);
-        //}
         #endregion
 
         #region properties
@@ -303,7 +292,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 if (plusOrMinus)
                     angle = -angle;
 
-                switch ((int)angle)
+                switch (angle)
                 {
                     case 15:
                         Value = COrientation.Create15Orientation(); break;

@@ -40,6 +40,7 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
             pManager.AddCurveParameter("Curve", "C", "Curvvv", GH_ParamAccess.item);
+            //pManager.AddBooleanParameter("Multi Sheet", "MS", "Multi Sheet", GH_ParamAccess.item, true);
         }
 
         /// <summary>
@@ -53,11 +54,13 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         /// <summary>
         ///     This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
-        protected override void SolveInstance(IGH_DataAccess DA)
+        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        protected override void SolveInstance(IGH_DataAccess da)
         {
             Curve curve = null;
-            if (!DA.GetData(0, ref curve)) return;
+            const bool ms = true;
+            if (!da.GetData(0, ref curve)) return;
+            //if (!(DA.GetData(1, ref MS))) return;
 
             if (curve == null) return;
 
@@ -69,8 +72,8 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
             if (h <= 0) return;
             if (w <= 0) return;
 
-            var sheet = new RhinoNestKernel.RhinoNestSheet(w, h);
-            DA.SetData(0, sheet);
+            var sheet = new RhinoNestKernel.RhinoNestSheet(w, h) {MultiSheet = ms};
+            da.SetData(0, sheet);
         }
     }
 }

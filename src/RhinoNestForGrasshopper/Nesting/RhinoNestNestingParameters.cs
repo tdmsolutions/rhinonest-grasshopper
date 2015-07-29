@@ -55,7 +55,7 @@ namespace RhinoNestForGrasshopper.Nesting
             pManager.AddNumberParameter("Max time", "Mt", "Max time", GH_ParamAccess.item, _parameters.TimeOut);
             pManager.AddNumberParameter("Precision", "P", "Precision", GH_ParamAccess.item,
                 _parameters.DistancePrecision);
-            pManager.AddParameter(new GCriterion(),"Global Criterion", "GC", "Global Criterion", GH_ParamAccess.item);
+            pManager.AddParameter(new GCriterion(), "Global Criterion", "GC", "Global Criterion", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -69,23 +69,23 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <summary>
         ///     This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
-        protected override void SolveInstance(IGH_DataAccess DA)
+        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        protected override void SolveInstance(IGH_DataAccess da)
         {
-            double i2i = _parameters.DistanceItemToItem;
-            double i2s = _parameters.DistanceItemToSheet;
+            double i2I = _parameters.DistanceItemToItem;
+            double i2S = _parameters.DistanceItemToSheet;
             double limitOfVariants = _parameters.LimitVariants;
             double timeOut = _parameters.TimeOut;
             double precision = _parameters.DistancePrecision;
-            GCriterionGoo _Criterion= new GCriterionGoo();
-            if (DA.GetData(0, ref i2i)) _parameters.DistanceItemToItem = i2i;
-            if (DA.GetData(1, ref i2s)) _parameters.DistanceItemToSheet = i2s;
-            if (DA.GetData(2, ref limitOfVariants)) _parameters.LimitVariants = (int) limitOfVariants;
-            if (DA.GetData(3, ref timeOut)) _parameters.TimeOut = (int) timeOut;
-            if (DA.GetData(4, ref precision)) _parameters.DistancePrecision = precision;
-            if (DA.GetData(5, ref _Criterion)) _parameters.Criterion = _Criterion.Value.Constraint; 
-            
-            DA.SetData(0, _parameters);
+            var criterion = new GCriterionGoo();
+            if (da.GetData(0, ref i2I)) _parameters.DistanceItemToItem = i2I;
+            if (da.GetData(1, ref i2S)) _parameters.DistanceItemToSheet = i2S;
+            if (da.GetData(2, ref limitOfVariants)) _parameters.LimitVariants = (int) limitOfVariants;
+            if (da.GetData(3, ref timeOut)) _parameters.TimeOut = (int) timeOut;
+            if (da.GetData(4, ref precision)) _parameters.DistancePrecision = precision;
+            if (da.GetData(5, ref criterion)) _parameters.Criterion = criterion.Value.Constraint;
+
+            da.SetData(0, _parameters);
         }
     }
 }

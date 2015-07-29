@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Grasshopper.Kernel;
-using Rhino.Geometry;
 using System.Drawing;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Data;
@@ -21,11 +18,11 @@ namespace RhinoNestForGrasshopper.Nesting
         #endregion
 
         #region constructor
+
         /// <summary>
         /// Create a new orientation.
         /// </summary>
         /// <param name="constraint">Constraint type.</param>
-        /// <param name="angle">Angle.</param>
         public GCriter(RhinoNestKernel.GlobalNestingCriterion constraint)
         {
             _constraint = constraint;
@@ -162,9 +159,7 @@ namespace RhinoNestForGrasshopper.Nesting
             if (Value.Constraint == RhinoNestKernel.GlobalNestingCriterion.TryEveryCenter)
                 return "Try Every Center";
 
-            else
-                return "Error";
-
+            return "Error";
         }
         #endregion
 
@@ -196,7 +191,7 @@ namespace RhinoNestForGrasshopper.Nesting
             }
 
             // TODO: this cast may fail, I'm not checking for correctness here.
-            RhinoNestKernel.GlobalNestingCriterion constraint = (RhinoNestKernel.GlobalNestingCriterion)reader.GetInt32("GCriterion");
+            var constraint = (RhinoNestKernel.GlobalNestingCriterion)reader.GetInt32("GCriterion");
             Value = GCriter.SetCriterion(constraint);
 
             return true;
@@ -209,7 +204,7 @@ namespace RhinoNestForGrasshopper.Nesting
     /// </summary>
     public class GCriterion : GH_PersistentParam<GCriterionGoo>
     {
-        public string[] text =
+        public string[] Text =
         {
             "Min X",
             "MinPerimeterOfNested",
@@ -248,7 +243,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// </summary>
         protected override GCriterionGoo PreferredCast(object data)
         {
-            GCriter t = data as GCriter;
+            var t = data as GCriter;
             if (t != null)
                 return new GCriterionGoo(t);
 
@@ -287,20 +282,20 @@ namespace RhinoNestForGrasshopper.Nesting
 
             System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
             item.Text = @"Set an Criterion";
-            Menu_AppendItem(item.DropDown, text[0], Menu_GOp_0);
-            Menu_AppendItem(item.DropDown, text[1], Menu_GOp_1);
-            Menu_AppendItem(item.DropDown, text[2], Menu_GOp_2);
-            Menu_AppendItem(item.DropDown, text[3], Menu_GOp_3);
-            Menu_AppendItem(item.DropDown, text[4], Menu_GOp_4);
-            Menu_AppendItem(item.DropDown, text[5], Menu_GOp_5);
-            Menu_AppendItem(item.DropDown, text[6], Menu_GOp_6);
-            Menu_AppendItem(item.DropDown, text[7], Menu_GOp_7);
-            Menu_AppendItem(item.DropDown, text[8], Menu_GOp_8);
-            Menu_AppendItem(item.DropDown, text[9], Menu_GOp_9);
-            Menu_AppendItem(item.DropDown, text[10], Menu_GOp_10);
-            Menu_AppendItem(item.DropDown, text[11], Menu_GOp_11);
-            Menu_AppendItem(item.DropDown, text[12], Menu_GOp_12);
-            Menu_AppendItem(item.DropDown, text[13], Menu_GOp_13);
+            Menu_AppendItem(item.DropDown, Text[0], Menu_GOp_0);
+            Menu_AppendItem(item.DropDown, Text[1], Menu_GOp_1);
+            Menu_AppendItem(item.DropDown, Text[2], Menu_GOp_2);
+            Menu_AppendItem(item.DropDown, Text[3], Menu_GOp_3);
+            Menu_AppendItem(item.DropDown, Text[4], Menu_GOp_4);
+            Menu_AppendItem(item.DropDown, Text[5], Menu_GOp_5);
+            Menu_AppendItem(item.DropDown, Text[6], Menu_GOp_6);
+            Menu_AppendItem(item.DropDown, Text[7], Menu_GOp_7);
+            Menu_AppendItem(item.DropDown, Text[8], Menu_GOp_8);
+            Menu_AppendItem(item.DropDown, Text[9], Menu_GOp_9);
+            Menu_AppendItem(item.DropDown, Text[10], Menu_GOp_10);
+            Menu_AppendItem(item.DropDown, Text[11], Menu_GOp_11);
+            Menu_AppendItem(item.DropDown, Text[12], Menu_GOp_12);
+            Menu_AppendItem(item.DropDown, Text[13], Menu_GOp_13);
 
             return item;
         }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using Grasshopper.Kernel;
-using Rhino.Geometry;
 using System.Drawing;
-using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
 using RhinoNestForGrasshopper.Properties;
 
-namespace RhinoNestForGrasshopper.Nesting
+namespace RhinoNestForGrasshopper.Nesting.Object
 {
     /// <summary>
     /// Collates nesting orientation constraints. 
@@ -21,11 +18,11 @@ namespace RhinoNestForGrasshopper.Nesting
         #endregion
 
         #region constructor
+
         /// <summary>
         /// Create a new orientation.
         /// </summary>
         /// <param name="constraint">Constraint type.</param>
-        /// <param name="angle">Angle.</param>
         private Criter(RhinoNestKernel.ObjectCriterion constraint)
         {
             _constraint = constraint;
@@ -164,9 +161,7 @@ namespace RhinoNestForGrasshopper.Nesting
 
             if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterWithMinimalAreaOfRectangularHullSearchForPair)
                 return "Perimeter With Minimal Area Of Rectangular Hull Search For Pair";
-            else
-                return "Error";
-
+            return "Error";
         }
         #endregion
 
@@ -210,7 +205,7 @@ namespace RhinoNestForGrasshopper.Nesting
     /// </summary>
     public class Criterion : GH_PersistentParam<CriterionGoo>
     {
-        public string[] text =
+        public string[] Text =
         {
             "Given Orientation As Basic One",
             "Minimize Size By X",
@@ -289,21 +284,21 @@ namespace RhinoNestForGrasshopper.Nesting
 
             System.Windows.Forms.ToolStripMenuItem item = new System.Windows.Forms.ToolStripMenuItem();
             item.Text = @"Set an Criterion";
-            Menu_AppendItem(item.DropDown, text[0], Menu_Op_0);
-            Menu_AppendItem(item.DropDown, text[1], Menu_Op_1);
-            Menu_AppendItem(item.DropDown, text[2], Menu_Op_2);
-            Menu_AppendItem(item.DropDown, text[3], Menu_Op_3);
-            Menu_AppendItem(item.DropDown, text[4], Menu_Op_4);
-            Menu_AppendItem(item.DropDown, text[5], Menu_Op_5);
-            Menu_AppendItem(item.DropDown, text[6], Menu_Op_6);
-            Menu_AppendItem(item.DropDown, text[7], Menu_Op_7);
-            Menu_AppendItem(item.DropDown, text[8], Menu_Op_8);
-            Menu_AppendItem(item.DropDown, text[9], Menu_Op_9);
-            Menu_AppendItem(item.DropDown, text[10], Menu_Op_10);
-            Menu_AppendItem(item.DropDown, text[11], Menu_Op_11);
-            Menu_AppendItem(item.DropDown, text[12], Menu_Op_12);
-            Menu_AppendItem(item.DropDown, text[13], Menu_Op_13);
-            Menu_AppendItem(item.DropDown, text[14], Menu_Op_14);
+            Menu_AppendItem(item.DropDown, Text[0], Menu_Op_0);
+            Menu_AppendItem(item.DropDown, Text[1], Menu_Op_1);
+            Menu_AppendItem(item.DropDown, Text[2], Menu_Op_2);
+            Menu_AppendItem(item.DropDown, Text[3], Menu_Op_3);
+            Menu_AppendItem(item.DropDown, Text[4], Menu_Op_4);
+            Menu_AppendItem(item.DropDown, Text[5], Menu_Op_5);
+            Menu_AppendItem(item.DropDown, Text[6], Menu_Op_6);
+            Menu_AppendItem(item.DropDown, Text[7], Menu_Op_7);
+            Menu_AppendItem(item.DropDown, Text[8], Menu_Op_8);
+            Menu_AppendItem(item.DropDown, Text[9], Menu_Op_9);
+            Menu_AppendItem(item.DropDown, Text[10], Menu_Op_10);
+            Menu_AppendItem(item.DropDown, Text[11], Menu_Op_11);
+            Menu_AppendItem(item.DropDown, Text[12], Menu_Op_12);
+            Menu_AppendItem(item.DropDown, Text[13], Menu_Op_13);
+            Menu_AppendItem(item.DropDown, Text[14], Menu_Op_14);
 
             return item;
         }

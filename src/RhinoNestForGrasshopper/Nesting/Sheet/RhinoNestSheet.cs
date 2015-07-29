@@ -44,6 +44,7 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         {
             pManager.AddNumberParameter("Witdh", "W", "Witdh", GH_ParamAccess.item,100);
             pManager.AddNumberParameter("Height", "H", "Height", GH_ParamAccess.item,100);
+            //pManager.AddBooleanParameter("Multi Sheet", "MS", "Multi Sheet", GH_ParamAccess.item, true);
         }
 
         /// <summary>
@@ -57,19 +58,22 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         /// <summary>
         ///     This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
-        protected override void SolveInstance(IGH_DataAccess DA)
+        /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
+        protected override void SolveInstance(IGH_DataAccess da)
         {
             double w = 0;
             double h = 0;
-            if (!DA.GetData(0, ref h)) return;
-            if ((!DA.GetData(1, ref w))) return;
+            const bool ms = true;
+
+            if (!da.GetData(0, ref h)) return;
+            if ((!da.GetData(1, ref w))) return;
+            //if ((!DA.GetData(2, ref MS))) return;
 
             if (h <= 0) return;
             if (w <= 0) return;
 
-            var sheet = new RhinoNestKernel.RhinoNestSheet(w, h);
-            DA.SetData(0, sheet);
+            var sheet = new RhinoNestKernel.RhinoNestSheet(w, h) {MultiSheet = ms};
+            da.SetData(0, sheet);
         }
     }
 }
