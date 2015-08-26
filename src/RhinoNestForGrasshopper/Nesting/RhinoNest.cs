@@ -257,6 +257,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 var _object = new List<RhinoNestObject>();
                 _buffold = 0;
                 _tryies = 0;
+                _nonest.Clear();
 
                 for (int i=0;i<_buffOut.Count;i++)
                     _buffOut.RemoveAt(i);
@@ -283,10 +284,6 @@ namespace RhinoNestForGrasshopper.Nesting
                 //start nesting
                 _nesting.StartNesting();
 
-                for (int i = 0; 0 != _nonest.Count; )
-                {
-                    _nonest.RemoveAt(i);
-                }
             }
         }
         #endregion
@@ -314,13 +311,9 @@ namespace RhinoNestForGrasshopper.Nesting
                 var listguid = new List<Guid>();
                 //creation and cleans for the var
                 var objresult = _nesting.NestingResult.NestedObjects;
-                RhinoNestObject[] nestedGeometry2=null;
-                Transform[] objtrans=null;
-
-                //resize for the array
-                Array.Resize(ref nestedGeometry2, objresult.Count);
-                Array.Resize(ref objtrans, objresult.Count);
-
+                var nestedGeometry2 = new RhinoNestObject[objresult.Count];
+                var objtrans = new Transform[objresult.Count];
+                
                 //get the objects
                 objresult.Keys.CopyTo(nestedGeometry2, 0);
                 objresult.Values.CopyTo(objtrans, 0);
