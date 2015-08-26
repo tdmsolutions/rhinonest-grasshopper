@@ -7,7 +7,7 @@ namespace RhinoNestForGrasshopper.Nesting
 {
     public class RhinoNestNestingParameters : GH_Component
     {
-        private RhinoNestKernel.RhinoNestNestingParameters _parameters;
+        private RhinoNestKernel.Nesting.RhinoNestNestingParameters _parameters;
 
         /// <summary>
         ///     Initializes a new instance of the RhinoNestNestingParameters class.
@@ -17,7 +17,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 "Define the parameters for a nesting",
                 "RhinoNest", "Nesting")
         {
-            _parameters = new RhinoNestKernel.RhinoNestNestingParameters();
+            _parameters = new RhinoNestKernel.Nesting.RhinoNestNestingParameters();
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            if (_parameters == null) _parameters = new RhinoNestKernel.RhinoNestNestingParameters();
+            if (_parameters == null) _parameters = new RhinoNestKernel.Nesting.RhinoNestNestingParameters();
             pManager.AddNumberParameter("Item to Item Distance", "I2I", "Item to Item Distance", GH_ParamAccess.item,
                 _parameters.DistanceItemToItem);
             pManager.AddNumberParameter("Item to Sheet Distance", "I2S", "Item to Sheet Distance", GH_ParamAccess.item,

@@ -10,7 +10,7 @@ using Grasshopper.Kernel.Attributes;
 using Rhino;
 using Rhino.Geometry;
 using RhinoNestForGrasshopper.Properties;
-using RhinoNestKernel;
+using RhinoNestKernel.Nesting;
 
 namespace RhinoNestForGrasshopper.Nesting
 {
@@ -21,9 +21,8 @@ namespace RhinoNestForGrasshopper.Nesting
     {
         //Delcaration var for the spiner
         private float _spinnerAngle;
-        private const int SpinnerSize = 32;
-        private const int SpinnerThickness = 5;
-        private bool _enableSpinner;
+        private const int SPINNER_SIZE = 32;
+        private const int SPINNER_THICKNESS = 5;
 
         /// <summary>
         /// Constructor
@@ -45,11 +44,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <summary>
         /// Get and set for EnableSpinner
         /// </summary>
-        public bool EnableSpinner
-        {
-            get { return _enableSpinner; }
-            set { _enableSpinner = value; }
-        }
+        public bool EnableSpinner { get; set; }
 
         /// <summary>
         ///  Event of Double Click for the left button
@@ -65,13 +60,13 @@ namespace RhinoNestForGrasshopper.Nesting
                 {
                     if (((RhinoNest)Owner).IsWorking == false)
                     {
-                        ((RhinoNest) Owner).MSolveme = true;
+                        ((RhinoNest)Owner)._mSolveme = true;
                         Owner.ExpireSolution(true);
                     }
                 }
                 finally
                 {
-                    ((RhinoNest) Owner).MSolveme = false;
+                    ((RhinoNest)Owner)._mSolveme = false;
                 }
             }
             return base.RespondToMouseDoubleClick(sender, e);
@@ -101,9 +96,9 @@ namespace RhinoNestForGrasshopper.Nesting
                 if (((RhinoNest) Owner).IsWorking)
                 {
                     var ptSpinner = new PointF(0.5f * (Bounds.Left + Bounds.Right), Bounds.Top);
-                    graphics.DrawArc(new Pen(Color.SteelBlue, SpinnerThickness), ptSpinner.X - (SpinnerSize / 2), ptSpinner.Y - (Bounds.Height / 2) - SpinnerSize, SpinnerSize, SpinnerSize, 0, _spinnerAngle);
-                    _spinnerAngle += 10.0f;
+                    graphics.DrawArc(new Pen(Color.SteelBlue, SPINNER_THICKNESS), ptSpinner.X - (SPINNER_SIZE / 2), ptSpinner.Y - (Bounds.Height / 2) - SPINNER_SIZE, SPINNER_SIZE, SPINNER_SIZE, 0, _spinnerAngle);
                     if (_spinnerAngle > 360) _spinnerAngle -= 360;
+                    _spinnerAngle += 10.0f;
                 }
             }
             base.Render(iCanvas, graphics, iChannel);
@@ -116,24 +111,23 @@ namespace RhinoNestForGrasshopper.Nesting
     /// </summary>
     public class RhinoNest : GH_Component
     {
-        //declaration of var
+        #region definitions
         private readonly List<List<RhinoNestObject>> _buffOut = new List<List<RhinoNestObject>>();
-        public RhinoNestNesting Nesting;
-        private List<RhinoNestObject> _object;
-        private RhinoNestKernel.RhinoNestNestingParameters _parameters;
-        private List<RhinoNestObject> _send;
-        public bool SetOutput = false;
-        public bool MSolveme;
-        private Curve[] _modifi;
-        private RhinoNestObject[] _nestedGeometry2;
-        private Dictionary<RhinoNestObject, Transform> _objresult;
-        private Transform[] _objtrans;
-        private RhinoNestSheet _sheets;
+        private readonly List<RhinoNestObject> _nonest = new List<RhinoNestObject>();
+        private RhinoNestNesting _nesting;
+        
+        private RhinoNestKernel.Nesting.RhinoNestNestingParameters _parameters;
+        private bool _setOutput;
+        public bool _mSolveme;
+
         private RhinoNestSheet _sheets2;
         private int _tryies;
-        private bool _isWorking;
         private readonly List<Guid> _mycurves = new List<Guid>();
+        private Int32 _buffold;
+        private List<RhinoNestSheetResult> _sheetsresults;
+        #endregion
 
+        #region DeclarationObjectItems
         /// <summary>
         /// Initializes a new instance of the RhinoNest class.
         /// </summary>
@@ -167,11 +161,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <summary>
         /// Het and set for IsWorking boolean
         /// </summary>
-        public bool IsWorking
-        {
-            get { return _isWorking; }
-            set { _isWorking = value; }
-        }
+        public bool IsWorking { get; set; }
 
         /// <summary>
         /// Create the Attibute for double click
@@ -199,10 +189,11 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <param name="pManager">GH_OutputParamManager: This class is used during Components constructions to add output parameters.</param>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("RhinoNest Object Nesteds", "O", "RhinoNest Object Nesteds",
+            pManager.AddGenericParameter("RhinoNest Object Nesteds", "ON", "RhinoNest Object Nesteds",
                 GH_ParamAccess.list);
-            // Non-used Objects
-            pManager.AddTextParameter("Report", "R", "Report", GH_ParamAccess.item);
+            pManager.AddGenericParameter("RhinoNest Object No Nesteds", "ONN", "RhinoNest Object No Nesteds",
+               GH_ParamAccess.list);
+            pManager.AddGenericParameter("Report", "R", "Report", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -221,20 +212,28 @@ namespace RhinoNestForGrasshopper.Nesting
         protected override void SolveInstance(IGH_DataAccess da)
         {
             // _setOutput put var to the exit
-            if (SetOutput)
+            if (_setOutput)
             {
+                for (int a = _buffOut.Count-1; a >0; a--)
+                {
+                    if (_buffOut[a].Count==0)
+                        _buffOut.RemoveAt(a);
+                }
+
                 da.SetDataList(0, _buffOut);
-                da.SetData(1, "RhinoNest was Successfully");
-                SetOutput = false;
+                da.SetDataList(1, _nonest);
+                da.SetDataList(2, _sheetsresults);
+
+                _setOutput = false;
                 IsWorking = false;
-                MSolveme = false;
+                _mSolveme = false;
             }
 
             //if the user doesn't make a double click force out
-            if (!MSolveme)
+            if (!_mSolveme)
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Double click me to start solving");
-                MSolveme = false;
+                _mSolveme = false;
                 return;
             }
 
@@ -250,29 +249,48 @@ namespace RhinoNestForGrasshopper.Nesting
                     }
                     RhinoDoc.ActiveDoc.Views.Redraw();
                 }
+                _sheetsresults = new List<RhinoNestSheetResult>();
                 //cleaning the var
                 IsWorking = true;
-                _sheets = new RhinoNestSheet();
-                _parameters = new RhinoNestKernel.RhinoNestNestingParameters();
-                _object = new List<RhinoNestObject>();
+                var sheets = new RhinoNestSheet();
+                _parameters = new RhinoNestKernel.Nesting.RhinoNestNestingParameters();
+                var _object = new List<RhinoNestObject>();
+                _buffold = 0;
+                _tryies = 0;
 
+                for (int i=0;i<_buffOut.Count;i++)
+                    _buffOut.RemoveAt(i);
+                
                 //getting var
                 if (!da.GetDataList(0, _object)) return;
-                if (!da.GetData(1, ref _sheets)) return;
+                if (!da.GetData(1, ref sheets)) return;
                 if (!da.GetData(2, ref _parameters)) return;
+
                 //saving thats
-                _sheets2 = new RhinoNestSheet(_sheets);
-                _send = new List<RhinoNestObject>(_object);
+                _sheets2 = new RhinoNestSheet(sheets);
+
+                //duplicate the list
+                var send= new List<RhinoNestObject>();
+                _object.ForEach(item => send.Add(new RhinoNestObject(item)));
+
                 //declaring nesting
-                Nesting = new RhinoNestNesting(_send, _sheets, _parameters);
+                _nesting = new RhinoNestNesting(send, sheets, _parameters);
+
                 //active the Flag for the event for finish and other for progress 
-                Nesting.OnNestingFinish += nesting_OnNestingFinish;
-                Nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
+                _nesting.OnNestingFinish += nesting_OnNestingFinish;
+                _nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
+
                 //start nesting
-                Nesting.StartNesting();
+                _nesting.StartNesting();
+
+                for (int i = 0; 0 != _nonest.Count; )
+                {
+                    _nonest.RemoveAt(i);
+                }
             }
         }
-
+        #endregion
+        #region Events
         /// <summary>
         /// Event for the procces of spiner
         /// </summary>
@@ -291,90 +309,103 @@ namespace RhinoNestForGrasshopper.Nesting
         private void nesting_OnNestingFinish(object sender, EventArgs e)
         {
             //For the nestet objects
-            if (Nesting.NestingResult.NestedObjects != null)
+            if (_nesting.NestingResult.NestedObjects != null)
             {
+                var listguid = new List<Guid>();
                 //creation and cleans for the var
-                _objresult = Nesting.NestingResult.NestedObjects;
-                _nestedGeometry2 = null;
-                _objtrans = null;
-                _modifi = null;
-                //resize for the array
-                Array.Resize(ref _nestedGeometry2, _objresult.Count);
-                Array.Resize(ref _objtrans, _objresult.Count);
-                Array.Resize(ref _modifi, _objresult.Count);
-                //get the objects
-                _objresult.Keys.CopyTo(_nestedGeometry2, 0);
-                _objresult.Values.CopyTo(_objtrans, 0);
+                var objresult = _nesting.NestingResult.NestedObjects;
+                RhinoNestObject[] nestedGeometry2=null;
+                Transform[] objtrans=null;
 
+                //resize for the array
+                Array.Resize(ref nestedGeometry2, objresult.Count);
+                Array.Resize(ref objtrans, objresult.Count);
+
+                //get the objects
+                objresult.Keys.CopyTo(nestedGeometry2, 0);
+                objresult.Values.CopyTo(objtrans, 0);
+
+                var curves = new List<Curve>();
                 //do the modify to every object (position and rotation) and add to the list of curves
-                for (int i = 0; i < _objresult.Count; i++)
+                for (int i = 0; i < objresult.Count; i++)
                 {
-                    _modifi[i] = _nestedGeometry2[i].ExternalCurve.DuplicateCurve();
-                    _modifi[i].Transform(_objtrans[i]);
-                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddCurve(_modifi[i]));
+                    curves.Add(nestedGeometry2[i].ExternalCurve.DuplicateCurve());
+                    curves[i].Transform(objtrans[i]);
+                    listguid.Add(RhinoDoc.ActiveDoc.Objects.AddCurve(curves[i]));
                 }
-                //add every objject to a buffer for put ir on the output
+                _mycurves.AddRange(listguid);
+                //add every object to a buffer for put on the output
                 _buffOut.Add( new List<RhinoNestObject>());
-                for (int i = 0; i < _objresult.Count; i++)
-                {
-                    _buffOut[_tryies].Add(new RhinoNestObject(_modifi[i]));
+                for (int i = 0; i < objresult.Count; i++)
+                {//TODO asegurar que funciona a qui se pasaba la curva externa
+                    _buffOut[_tryies].Add(new RhinoNestObject(curves[i]));
                 }
+
+                //create var for make the report 
+                var rnProject = new RhinoNestProject(_nesting.NestingResult, _sheets2);
+                var objs = new List<Tuple<RhinoNestObject, Transform, List<Guid>>>();
+                for (int i = 0; i < _nesting.NestingResult.NestedObjects.Count; i++)
+                {
+                    var guids = new List<Guid> {listguid[i]};
+                    var tup = new Tuple<RhinoNestObject, Transform, List<Guid>>(nestedGeometry2[i], objtrans[i], guids);
+                    objs.Add(tup);
+                }
+
+                _sheetsresults.Add(new RhinoNestSheetResult(rnProject, objs));
+
+                //get the bound for print if it isn't the first sheet and print it  if is the first don't print the sheet
+                if (_tryies != 0)
+                {
+                    var print = _sheets2.GetBounds();
+                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddPolyline(print));
+                }
+                //add trie for the next time
+                _tryies++;
+
                 //redraw all
                 RhinoDoc.ActiveDoc.Views.Redraw();
             }
-            //if any object can't be nested
-            if (Nesting.NestingResult.RemainingObjects.Any())
+
+            //if there is more object for nest
+            if (_nesting.NestingResult.RemainingObjects.Any())
             {
-                //first remove from the list the nested objects
-                for (int a = 0; _nestedGeometry2.Length > a; a++)
+                //get the remaining object and count how many is for nest
+                var send = _nesting.NestingResult.RemainingObjects;
+                Int32 count=0;
+                foreach (var item in send)
                 {
-                    for (int i = 0; i < _send.Count; i++)
-                    {
-                        if (_send[i].Parameters.Id == _nestedGeometry2[a].Parameters.Id)
-                        {
-                            _send[i].Parameters.Copies = _send[i].Parameters.Copies - 1;
-                            if (_send[i].Parameters.Copies <= 0)
-                            {
-                                _send.RemoveAt(i);
-                            }
-                            a++;
-                            i = -1;
-                            if (a >= _nestedGeometry2.Length)
-                            {
-                                i = _send.Count;
-                            }
-                        }
-                    }
+                    count = count + item.Parameters.RemainingCopies;
                 }
-                //if it can not nest all object then use again the nest with a new sheet at right of the last
-                if (_send.Count > 0)
+
+                //if have ramaining object to nest
+                if (count > 0 && _buffold != count)
                 {
-                    _tryies++;
+                    _nonest.Clear();
+
+                    _buffold = count;
+                    _nonest.AddRange(send);
+
                     //move the sheet it's being used
-                    _sheets2.Move(_sheets2.LenX(), 0);
-                    //create a var for print the new sheet
-                    var print = new Polyline(4)
-                    {
-                        new Point3d((_sheets2.LenX())*_tryies, 0, 0),
-                        new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), 0, 0),
-                        new Point3d((_sheets2.LenX())*_tryies + (_sheets2.LenX()), _sheets2.LenY(), 0),
-                        new Point3d((_sheets2.LenX())*_tryies, _sheets2.LenY(), 0)
-                    };
-                    //we add 1 try for the next nesting
-                    
-                    //print the object and add to the list of curves 
-                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddPolyline(print));
-                    RhinoDoc.ActiveDoc.Views.Redraw();
-                    //send the new nest and wait the event of finish and progress for spiner
-                    Nesting = new RhinoNestNesting(_send, _sheets2, _parameters);
-                    Nesting.OnNestingFinish += nesting_OnNestingFinish;
-                    Nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
-                    Nesting.StartNesting();
+                    _sheets2.NextPosition();
+
+                    //renew the nesting
+                    _nesting = new RhinoNestNesting(send, _sheets2, _parameters);
+
+                    //delete the actual events
+                    _nesting.OnNestingFinish -= nesting_OnNestingFinish;
+                    _nesting.OnNestingProgressChange -= Nesting_OnNestingProgressChange;
+
+                    //create the new events
+                    _nesting.OnNestingFinish += nesting_OnNestingFinish;
+                    _nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
+
+                    //start nasting again
+                    _nesting.StartNesting();
                 }
                 else
                 {
-                   // if it's not item to nest then call to shedulesolution for the expire solution
-                    SetOutput = true;
+                    // if it's not item to nest then call to shedulesolution for the expire solution
+                    _setOutput = true;
                     GH_Document doc = OnPingDocument();
                     if (doc != null)
                     {
@@ -383,5 +414,6 @@ namespace RhinoNestForGrasshopper.Nesting
                 }
             }
         }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
@@ -11,8 +12,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
     /// </summary>
     public class RhinoNestObject : GH_Component
     {
-        private System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject> _parameters2 = new System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
-        private readonly System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject> _parameters = new System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
         /// <summary>
         /// Initializes a new instance of the RhinoNestObjectParameters class.
         /// </summary>
@@ -74,26 +73,26 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <param name="da">IGH_DataAccess: The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess da)
         {
+            var parameters = new List<RhinoNestKernel.Nesting.RhinoNestObject>();
+        
             //Declaration.
-            var Object=new System.Collections.Generic.List<Curve>(100);
+            var Object=new List<Curve>();
             var orientation= new OrientationGoo();
             var criterion = new CriterionGoo();
             var copies = 0;
             var priority = 0;
             
             //clear value and get the objects.
-            _parameters.Clear();
-            if (da.GetDataList(0, Object)) _parameters2 = new  System.Collections.Generic.List<RhinoNestKernel.RhinoNestObject>();
-            if (da.GetData(1, ref copies)) {}
-            if (da.GetData(2, ref priority)){}
-            if (da.GetData(3, ref orientation)) {}
-            if (da.GetData(4, ref criterion)) { }
-
+            if (!da.GetDataList(0, Object)) return;
+            da.GetData(1, ref copies);
+            da.GetData(2, ref priority);
+            da.GetData(3, ref orientation);
+            da.GetData(4, ref criterion);
 
             //asignament of all objects on list.
             foreach (Curve t in Object)
             {
-                var obj = new RhinoNestKernel.RhinoNestObject(t)
+                var obj = new RhinoNestKernel.Nesting.RhinoNestObject(t)
                 {
                     Parameters =
                     {
@@ -103,12 +102,11 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                         Criterion = criterion.Value.Constraint
                     }
                 };
-                _parameters2.Add(obj);
+                parameters.Add(obj);
             }
 
             //Put the list to Output.
-            _parameters.AddRange(_parameters2);
-            da.SetDataList(0, _parameters);
+            da.SetDataList(0, parameters);
         }
     }
 }

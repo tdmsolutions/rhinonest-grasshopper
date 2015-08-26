@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using RhinoNestForGrasshopper.Properties;
+using RhinoNestKernel.Nesting;
 
 namespace RhinoNestForGrasshopper.Nesting
 {
     public class RhinoNestReport : GH_Component
     {
+        private readonly List<RhinoNestSheetResult> _sheetsresults = new List<RhinoNestSheetResult>();
+        private List<string> _reportList = new List<string>(); 
         /// <summary>
         ///     Initializes a new instance of the RhinoNestReport class.
         /// </summary>
@@ -42,6 +46,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            pManager.AddGenericParameter("Report", "R", "Report", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -49,6 +54,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
+            pManager.AddTextParameter("Report text", "RT", "Report text", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -57,6 +63,26 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <param name="da">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess da)
         {
+            da.GetDataList(0, _sheetsresults);
+            _reportList=new List<string>();
+            int t = 1;
+            foreach (var res in _sheetsresults)
+            {
+                var aux = new List<string>
+                {
+                    "Sheet : " + t + "\n",
+                    "Panel Size : " + res.SheetInfo.PanelSize.X + "x" + res.SheetInfo.PanelSize.Y + "\n",
+                    "PanelArea : " + res.SheetInfo.PanelArea + "\n",
+                    "Objects Num : " + res.SheetInfo.CountObjects + "\n",
+                    "Objects Area : " + res.SheetInfo.TotalAreaObjects + "\n",
+                    "Obtimization : " + res.SheetInfo.Optimitzation + "\n",
+                    "\n"
+                };
+                _reportList.AddRange(aux);
+                t++;
+            }
+            
+           da.SetDataList(0, _reportList);
         }
     }
 }

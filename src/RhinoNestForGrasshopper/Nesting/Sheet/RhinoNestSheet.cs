@@ -63,7 +63,7 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
         {
             double w = 0;
             double h = 0;
-            const bool ms = true;
+            const bool _ms = true;
 
             if (!da.GetData(0, ref h)) return;
             if ((!da.GetData(1, ref w))) return;
@@ -72,7 +72,7 @@ namespace RhinoNestForGrasshopper.Nesting.Sheet
             if (h <= 0) return;
             if (w <= 0) return;
 
-            var sheet = new RhinoNestKernel.RhinoNestSheet(w, h) {MultiSheet = ms};
+            var sheet = new RhinoNestKernel.Nesting.RhinoNestSheet(w, h) { MultiSheet = _ms };
             da.SetData(0, sheet);
         }
     }

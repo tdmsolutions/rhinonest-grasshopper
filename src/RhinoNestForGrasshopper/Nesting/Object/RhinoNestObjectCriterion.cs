@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using RhinoNestForGrasshopper.Properties;
+using RhinoNestKernel;
+using RhinoNestKernel.Nesting;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
@@ -14,7 +20,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
     public class Criter
     {
         #region fields
-        private readonly RhinoNestKernel.ObjectCriterion _constraint;
+        private readonly ObjectCriterion _constraint;
         #endregion
 
         #region constructor
@@ -23,7 +29,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Create a new orientation.
         /// </summary>
         /// <param name="constraint">RhinoNestKernel.ObjectCriterion: Constraint type.</param>
-        private Criter(RhinoNestKernel.ObjectCriterion constraint)
+        private Criter(ObjectCriterion constraint)
         {
             _constraint = constraint;
         }
@@ -32,7 +38,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Create a fixed orientation.
         /// </summary>
         /// <param name="value">RhinoNestKernel.ObjectCriterion: Constraint type.</param>
-        public static Criter SetCriterion(RhinoNestKernel.ObjectCriterion value)
+        public static Criter SetCriterion(ObjectCriterion value)
         {
             return new Criter(value);
         }
@@ -43,7 +49,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <summary>
         /// Gets the constraint type.
         /// </summary>
-        public RhinoNestKernel.ObjectCriterion Constraint
+        public ObjectCriterion Constraint
         {
             get { return _constraint; }
         }
@@ -60,7 +66,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Constructors Empty.
         /// </summary>
         public CriterionGoo()
-            : base(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.MinimizeSizeByX))
+            : base(Criter.SetCriterion(ObjectCriterion.MinimizeSizeByX))
         { }
         /// <summary>
         /// Constructor with Criter.
@@ -83,7 +89,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 if (Value == null)
                     return false;
 
-                // TODO: test the angle for validity perhaps?
                 return true;
             }
         }
@@ -97,7 +102,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 if (Value == null)
                     return "Orientation data is null.";
 
-                // TODO: test the angle for validity perhaps?
                 return string.Empty;
             }
         }
@@ -137,55 +141,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         public override string ToString()
         {
-            if (Value == null)
-                return "Null Criterion";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.ConstructLatticePlacement)
-                return "Construct Lattice Placement";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.GivenOrientationAsBasicOne)
-                return "Given Orientation As Basic One";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.MinimizeArea)
-                return "Minimize Area";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.MinimizePerimeter)
-                return "Minimize Perimeter";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.MinimizeSizeByX)
-                return "Minimize Size By X";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.MinimizeSizeByY)
-                return "Minimize Size By Y";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.OnlySearchForAngleForLattice)
-                return "Only Search For Angle For Lattice";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterForPairIdenticalOfRectangularHullConstructPair)
-                return "Perimeter For Pair Identical Of Rectangular Hull Construct Pair";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterForPairIdenticalOfRectangularHullSearchForPair)
-                return "Perimeter For Pair Identical Of Rectangular Hull Search For Pair";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalAreaOfRectangularHullConstructPair)
-                return "Perimeter Pair With Minimal Area Of Rectangular Hull Construct Pair";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalAreaOfRectangularHullSearchForAngle)
-                return "Perimeter Pair With Minimal AreaOf Rectangular Hull Search For Angle";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalPerimeterOfRectangularHullConstructPair)
-                return "Perimeter Pair With Minimal Perimeter Of Rectangular Hull ConstructPair";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalPerimeterOfRectangularHullSearchForAngle)
-                return "Perimeter Pair With Minimal Perimeter Of Rectangular Hull Search For Angle";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterWithMinimalAreaOfRectangularHullConstructPair)
-                return "Perimeter With Minimal Area Of Rectangular Hull Construct Pair";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectCriterion.PerimeterWithMinimalAreaOfRectangularHullSearchForPair)
-                return "Perimeter With Minimal Area Of Rectangular Hull Search For Pair";
-
-            return "Error";
+            return EnumDescription<ObjectCriterion>.Description(Value.Constraint);
         }
         #endregion
 
@@ -204,7 +160,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="writer">GH_IO.Serialization.GH_IWriter: Provides acces to a subset of GH_Chunk methods used for writing archives.</param>
         /// <returns>Bool: true.</returns>
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        public override bool Write(GH_IWriter writer)
         {
             if (Value == null)
                 return true;
@@ -217,7 +173,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="reader">GH_IO.Serialization.GH_IReader: Provides acces to a subset of GH_Chunk methods used for reading archives.</param>
         /// <returns>Bool: true.</returns>
-        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        public override bool Read(GH_IReader reader)
         {
             if (!reader.ItemExists("Criterion"))
             {
@@ -225,8 +181,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 return true;
             }
 
-            // TODO: this cast may fail, I'm not checking for correctness here.
-            RhinoNestKernel.ObjectCriterion constraint = (RhinoNestKernel.ObjectCriterion)reader.GetInt32("Criterion");
+            var constraint = (ObjectCriterion)reader.GetInt32("Criterion");
             Value = Criter.SetCriterion(constraint);
 
             return true;
@@ -239,31 +194,14 @@ namespace RhinoNestForGrasshopper.Nesting.Object
     /// </summary>
     public class Criterion : GH_PersistentParam<CriterionGoo>
     {
-        public string[] Text =
-        {
-            "Given Orientation As Basic One",
-            "Minimize Size By X",
-            "Minimize Size By Y",
-            "Minimize Perimeter",
-            "Minimize Area",
-            "Perimeter For Pair Identical Of Rectangular    Hull - Search For Pair",
-            "Perimeter With Minimal Area Of Rectangular Hull - Search For Pair",
-            "Perimeter For Pair Identical Of Rectangula     Hull - Construct Pair",
-            "Perimeter With Minimal Area Of Rectangula   Hull - Construct Pair",
-            "Perimeter Pair With Minimal Perimeter Of Rectangular Hull - Shearch for Angle",
-            "Perimeter Pair With Minimal Area Of Rectangular Hull - Shearch for Angle",
-            "Only Search For Angle For Lattice",
-            "Construct Lattice Placement",
-            "Perimeter Pair With Minimal Perimeter Of Rectangular Hull - Construct Pair",
-            "Perimeter Pair With Minimal Area Of Rectangular Hull - Construct Pair"
-        };
+        
         /// <summary>
         /// Constructor Empty
         /// </summary>
         public Criterion()
             : base("Criterion", "Criterion", "Criterion data for nesting", "RhinoNest", "Nesting")
         {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.GivenOrientationAsBasicOne));
+            SetNewCriter(Criter.SetCriterion(ObjectCriterion.GivenOrientationAsBasicOne));
         }
 
         /// <summary>
@@ -271,7 +209,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="values">ref CriterionGoo list: Goo wrapper for orientation. End-Code typically doesn't concern itself with this.</param>
         /// <returns>GH_GetterResult: Enumerates typica getter results</returns>
-        protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<CriterionGoo> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<CriterionGoo> values)
         {
             return GH_GetterResult.cancel;
         }
@@ -342,34 +280,23 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Set a function for all option on ToolStripMenuItem.
         /// </summary>
         /// <returns>ToolStripMenuItem: Represent a selectable option displayed on System.Windows.Forms.MenuStrip.</returns>
-        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
+        protected override ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            // TODO: figure out whether one of these is already assigned as persistent data and set the check to TRUE.
+            var item = new ToolStripMenuItem {Text = @"Set an Criterion"};
 
-            var item = new System.Windows.Forms.ToolStripMenuItem {Text = @"Set an Criterion"};
-            Menu_AppendItem(item.DropDown, Text[0], Menu_Op_0);
-            Menu_AppendItem(item.DropDown, Text[1], Menu_Op_1);
-            Menu_AppendItem(item.DropDown, Text[2], Menu_Op_2);
-            Menu_AppendItem(item.DropDown, Text[3], Menu_Op_3);
-            Menu_AppendItem(item.DropDown, Text[4], Menu_Op_4);
-            Menu_AppendItem(item.DropDown, Text[5], Menu_Op_5);
-            Menu_AppendItem(item.DropDown, Text[6], Menu_Op_6);
-            Menu_AppendItem(item.DropDown, Text[7], Menu_Op_7);
-            Menu_AppendItem(item.DropDown, Text[8], Menu_Op_8);
-            Menu_AppendItem(item.DropDown, Text[9], Menu_Op_9);
-            Menu_AppendItem(item.DropDown, Text[10], Menu_Op_10);
-            Menu_AppendItem(item.DropDown, Text[11], Menu_Op_11);
-            Menu_AppendItem(item.DropDown, Text[12], Menu_Op_12);
-            Menu_AppendItem(item.DropDown, Text[13], Menu_Op_13);
-            Menu_AppendItem(item.DropDown, Text[14], Menu_Op_14);
-
+            foreach (var val in Enum.GetValues(typeof(ObjectCriterion)).Cast<ObjectCriterion>())
+            {
+                var it = Menu_AppendItem(item.DropDown,
+                    EnumDescription<ObjectCriterion>.Description(val), MenuClick);
+                it.Tag = val;
+            }
             return item;
         }
         /// <summary>
         /// Make imposible do a multislection
         /// </summary>
         /// <returns>return null</returns>
-        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
+        protected override ToolStripMenuItem Menu_CustomMultiValueItem()
         {
             return null;
         }
@@ -399,136 +326,13 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
         /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_0(object sender, EventArgs e)
+        private void MenuClick(object sender, EventArgs e)
         {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.GivenOrientationAsBasicOne));
+            var send = sender as ToolStripMenuItem;
+            if (send!=null)
+                SetNewCriter(Criter.SetCriterion((ObjectCriterion)send.Tag));
         }
-        /// <summary>
-        /// Make a function for option 1 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_1(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.MinimizeSizeByX));
-        }
-        /// <summary>
-        /// Make a function for option 2 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_2(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.MinimizeSizeByY));
-        }
-        /// <summary>
-        /// Make a function for option 3 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_3(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.MinimizePerimeter));
-        }
-        /// <summary>
-        /// Make a function for option 4 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_4(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.MinimizeArea));
-        }
-        /// <summary>
-        /// Make a function for option 5 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_5(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterForPairIdenticalOfRectangularHullSearchForPair));
-        }
-        /// <summary>
-        /// Make a function for option 6 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_6(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterWithMinimalAreaOfRectangularHullSearchForPair));
-        }
-        /// <summary>
-        /// Make a function for option 7 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_7(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterForPairIdenticalOfRectangularHullConstructPair));
-        }
-        /// <summary>
-        /// Make a function for option 8 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_8(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalAreaOfRectangularHullConstructPair));
-        }
-        /// <summary>
-        /// Make a function for option 9 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_9(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalPerimeterOfRectangularHullSearchForAngle));
-        }
-        /// <summary>
-        /// Make a function for option 10 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_10(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalAreaOfRectangularHullSearchForAngle));
-        }
-        /// <summary>
-        /// Make a function for option 11 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_11(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.OnlySearchForAngleForLattice));
-        }
-        /// <summary>
-        /// Make a function for option 12 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_12(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.ConstructLatticePlacement));
-        }
-        /// <summary>
-        /// Make a function for option 13 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_13(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalPerimeterOfRectangularHullConstructPair));
-        }
-        /// <summary>
-        /// Make a function for option 14 from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_Op_14(object sender, EventArgs e)
-        {
-            SetNewCriter(Criter.SetCriterion(RhinoNestKernel.ObjectCriterion.PerimeterPairWithMinimalAreaOfRectangularHullConstructPair));
-        }
+
         #endregion
     }
 

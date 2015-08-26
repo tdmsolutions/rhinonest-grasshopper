@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using RhinoNestForGrasshopper.Properties;
+using RhinoNestKernel;
+using RhinoNestKernel.Nesting;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
@@ -14,7 +20,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
     public class COrientation
     {
         #region fields
-        private readonly RhinoNestKernel.ObjectOrientation _constraint;
+        private readonly ObjectOrientation _constraint;
         private readonly int _angle; // Question, is it possible to allow more than one angle?
         #endregion
 
@@ -24,7 +30,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="constraint">Constraint type.</param>
         /// <param name="angle">Angle.</param>
-        public COrientation(RhinoNestKernel.ObjectOrientation constraint, int angle)
+        public COrientation(ObjectOrientation constraint, int angle)
         {
             _constraint = constraint;
             _angle = angle;
@@ -38,80 +44,13 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <summary>
         /// Create a fixed orientation.
         /// </summary>
+        public static COrientation CreateOrientation(ObjectOrientation obj, int ob)
+        {
+            return new COrientation(obj, 0);
+        }
         public static COrientation CreateFixedOrientation()
         {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Fixed, 0);
-        }
-        /// <summary>
-        /// Create a free orientation.
-        /// </summary>
-        public static COrientation CreateFreeOrientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Free, 0);
-        }
-        /// <summary>
-        /// Create a 15 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create15Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Angle15, 15);
-        }
-        /// <summary>
-        /// Create a 30 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create30Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Angle30, 30);
-        }
-        /// <summary>
-        /// Create a 45 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create45Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Angle45, 45);
-        }
-        /// <summary>
-        /// Create a 60 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create60Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Angle60, 60);
-        }
-        /// <summary>
-        /// Create a 90 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create90Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Angle90, 90);
-        }
-        /// <summary>
-        /// Create a -90 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Createn90Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Positive90Negative90, -90);
-        }
-        /// <summary>
-        /// Create a -45 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Createn45Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Mirror, -45);
-        }
-        /// <summary>
-        /// Create a 180 degree Orientation.
-        /// </summary>
-        /// <returns></returns>
-        public static COrientation Create180Orientation()
-        {
-            return new COrientation(RhinoNestKernel.ObjectOrientation.Positive90Negative90, 180);
+            return new COrientation(ObjectOrientation.Fixed, 0);
         }
 
         #endregion
@@ -120,7 +59,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// <summary>
         /// Gets the constraint type.
         /// </summary>
-        public RhinoNestKernel.ObjectOrientation Constraint
+        public ObjectOrientation Constraint
         {
             get { return _constraint; }
         }
@@ -174,7 +113,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 if (Value == null)
                     return false;
 
-                // TODO: test the angle for validity perhaps?
                 return true;
             }
         }
@@ -188,7 +126,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 if (Value == null)
                     return "Orientation data is null.";
 
-                // TODO: test the angle for validity perhaps?
                 return string.Empty;
             }
         }
@@ -226,20 +163,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         public override string ToString()
         {
-            if (Value == null)
-                return "Null orientation";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectOrientation.Fixed)
-                return "Fixed orientation";
-
-            if (Value.Constraint == RhinoNestKernel.ObjectOrientation.Free)
-                return "Free orientation";
-
-            string prefix = string.Empty;
-            if (Value.IsPlusOrMinus)
-                prefix = "±";
-
-            return string.Format("{0}{1}°", prefix, Value.Angle);
+            return Value.Constraint.ToString();
         }
 
         /// <summary>
@@ -270,8 +194,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 target = (TQ)((object)angle);
                 return true;
             }
-
-
             return false;
         }
         /// <summary>
@@ -295,26 +217,24 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 switch ((int)source)
                 {
                     case 15:
-                        Value = COrientation.Create15Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle15,15); break;
                     case 30:
-                        Value = COrientation.Create30Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle30,30); break;
                     case 45:
-                        Value = COrientation.Create45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle45,45); break;
                     case 90:
-                        Value = COrientation.Create90Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle90,90); break;
                     case 180:
-                        Value = COrientation.Create180Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Mirror,180); break;
                     case -90:
-                        Value = COrientation.Createn90Orientation(); break;
-                    case -45:
-                        Value = COrientation.Createn45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Positive90Negative90,-90); break;
                 }
                 return true;
             }
 
             if (source is string)
             {
-                string text = (string)source;
+                var text = (string)source;
                 text = text.Replace("°", string.Empty);
                 text = text.Trim();
 
@@ -348,19 +268,17 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 switch (angle)
                 {
                     case 15:
-                        Value = COrientation.Create15Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle15, 15); break;
                     case 30:
-                        Value = COrientation.Create30Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle30, 30); break;
                     case 45:
-                        Value = COrientation.Create45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle45, 45); break;
                     case 90:
-                        Value = COrientation.Create90Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle90, 90); break;
                     case 180:
-                        Value = COrientation.Create180Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Mirror, 180); break;
                     case -90:
-                        Value = COrientation.Createn90Orientation(); break;
-                    case -45:
-                        Value = COrientation.Createn45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Positive90Negative90, -90); break;
                 }
                 return true;
             }
@@ -382,13 +300,13 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="writer">GH_IO.Serialization.GH_IWriter: Provides acces to a subset of GH_Chunk methods used for writing archives.</param>
         /// <returns> Bool: true.</returns>
-        public override bool Write(GH_IO.Serialization.GH_IWriter writer)
+        public override bool Write(GH_IWriter writer)
         {
             if (Value == null)
                 return true;
 
             writer.SetInt32("Constraint", (int)Value.Constraint);
-            if ((Value.Constraint != RhinoNestKernel.ObjectOrientation.Fixed) & (Value.Constraint != RhinoNestKernel.ObjectOrientation.Free))
+            if ((Value.Constraint != ObjectOrientation.Fixed) & (Value.Constraint != ObjectOrientation.Free))
             {
                 if (Value.IsPlusOrMinus)
                     writer.SetInt32("Angle", -Value.Angle);
@@ -403,7 +321,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="reader">GH_IO.Serialization.GH_IReader: Provides acces to a subset of GH_Chunk methods used for reading archives.</param>
         /// <returns>Bool: true.</returns>
-        public override bool Read(GH_IO.Serialization.GH_IReader reader)
+        public override bool Read(GH_IReader reader)
         {
             if (!reader.ItemExists("Constraint"))
             {
@@ -411,31 +329,28 @@ namespace RhinoNestForGrasshopper.Nesting.Object
                 return true;
             }
 
-            // TODO: this cast may fail, I'm not checking for correctness here.
-            RhinoNestKernel.ObjectOrientation constraint = (RhinoNestKernel.ObjectOrientation)reader.GetInt32("Constraint");
-            if (constraint == RhinoNestKernel.ObjectOrientation.Fixed)
+            var constraint = (ObjectOrientation)reader.GetInt32("Constraint");
+            if (constraint == ObjectOrientation.Fixed)
                 Value = COrientation.CreateFixedOrientation();
-            else if (constraint == RhinoNestKernel.ObjectOrientation.Free)
-                Value = COrientation.CreateFreeOrientation();
+            else if (constraint == ObjectOrientation.Free)
+                Value = COrientation.CreateOrientation(ObjectOrientation.Free, 0);
             else
             {
                 int angle = reader.GetInt32("Angle");
                 switch (angle)
                 {
                     case 15:
-                        Value = COrientation.Create15Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle15, 15); break;
                     case 30:
-                        Value = COrientation.Create30Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle30, 30); break;
                     case 45:
-                        Value = COrientation.Create45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle45, 45); break;
                     case 90:
-                        Value = COrientation.Create90Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Angle90, 90); break;
                     case 180:
-                        Value = COrientation.Create180Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Mirror, 180); break;
                     case -90:
-                        Value = COrientation.Createn90Orientation(); break;
-                    case -45:
-                        Value = COrientation.Createn45Orientation(); break;
+                        Value = COrientation.CreateOrientation(ObjectOrientation.Positive90Negative90, -90); break;
                 }
             }
 
@@ -462,7 +377,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="values">ref CriterionGoo list: Goo wrapper for orientation. End-Code typically doesn't concern itself with this.</param>
         /// <returns>GH_GetterResult: Enumerates typica getter results</returns>
-        protected override GH_GetterResult Prompt_Plural(ref System.Collections.Generic.List<OrientationGoo> values)
+        protected override GH_GetterResult Prompt_Plural(ref List<OrientationGoo> values)
         {
             return GH_GetterResult.cancel;
         }
@@ -504,7 +419,6 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         {
             get
             {
-
                 return Resources.IconRhinoNestObjectOrientation;
             }
         }
@@ -528,31 +442,26 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// Set a function for all option on ToolStripMenuItem.
         /// </summary>
         /// <returns>ToolStripMenuItem: Represent a selectable option displayed on System.Windows.Forms.MenuStrip.</returns>
-        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomSingleValueItem()
+        protected override ToolStripMenuItem Menu_CustomSingleValueItem()
         {
-            // TODO: figure out whether one of these is already assigned as persistent data and set the check to TRUE.
-
-            var item = new System.Windows.Forms.ToolStripMenuItem {Text = @"Set an Orientation"};
-            Menu_AppendItem(item.DropDown, "Fixed", Menu_FixedClicked);
-            Menu_AppendItem(item.DropDown, "Free", Menu_FreeClicked);
-            Menu_AppendSeparator(item.DropDown);
-            Menu_AppendItem(item.DropDown, "15", Menu_15Clicked);
-            Menu_AppendItem(item.DropDown, "30", Menu_30Clicked);
-            Menu_AppendItem(item.DropDown, "45", Menu_45Clicked);
-            Menu_AppendItem(item.DropDown, "60", Menu_60Clicked);
-            Menu_AppendItem(item.DropDown, "90", Menu_90Clicked);
-            Menu_AppendItem(item.DropDown, "180", Menu_180Clicked);
-            Menu_AppendSeparator(item.DropDown);
-            Menu_AppendItem(item.DropDown, "±45", Menu_pm45Clicked);
-            Menu_AppendItem(item.DropDown, "±90", Menu_pm90Clicked);
-
+            int a=0;
+            var item = new ToolStripMenuItem {Text = @"Set an Orientation"};
+            foreach (var val in Enum.GetValues(typeof(ObjectOrientation)).Cast<ObjectOrientation>())
+            {
+                var it = Menu_AppendItem(item.DropDown,
+                    EnumDescription<ObjectOrientation>.Description(val), MenuClick);
+                it.Tag = val;
+                a++;
+                if (a == 2 | a == 8)
+                    Menu_AppendSeparator(item.DropDown);
+            }
             return item;
         }
         /// <summary>
         /// Make imposible do a multislection
         /// </summary>
         /// <returns>return null</returns>
-        protected override System.Windows.Forms.ToolStripMenuItem Menu_CustomMultiValueItem()
+        protected override ToolStripMenuItem Menu_CustomMultiValueItem()
         {
             return null;
         }
@@ -580,90 +489,28 @@ namespace RhinoNestForGrasshopper.Nesting.Object
         /// </summary>
         /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
         /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_FixedClicked(object sender, EventArgs e)
+        private void MenuClick(object sender, EventArgs e)
         {
-            SetNewOrientation(COrientation.CreateFixedOrientation());
-        }
-        /// <summary>
-        /// Make a function for free option from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_FreeClicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.CreateFreeOrientation());
-        }
-        /// <summary>
-        /// Make a function for option 15 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_15Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create15Orientation());
-        }
-        /// <summary>
-        /// Make a function for option 30 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_30Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create30Orientation());
-        }
-        /// <summary>
-        /// Make a function for option 45 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_45Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create45Orientation());
-        }
-        /// <summary>
-        /// Make a function for option 60 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_60Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create60Orientation());
-        }
-        /// <summary>
-        /// Make a function for option 90 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_90Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create90Orientation());
-        }
-        /// <summary>
-        /// Make a function for option 180 degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_180Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Create180Orientation());
-        }
-        /// <summary>
-        /// Make a function for option -45degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_pm45Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Createn45Orientation());
-        }
-        /// <summary>
-        /// Make a function for option -90degree from ToolStripMenu
-        /// </summary>
-        /// <param name="sender">>object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
-        /// <param name="e">RhinoNestEventArgs: Class used in events.</param>
-        private void Menu_pm90Clicked(object sender, EventArgs e)
-        {
-            SetNewOrientation(COrientation.Createn90Orientation());
+            var send = sender as ToolStripMenuItem;
+            if (send == null)
+                return;
+
+            if (((ObjectOrientation)send.Tag == ObjectOrientation.Fixed) || ((ObjectOrientation)send.Tag == ObjectOrientation.Free))
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag,1));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Angle15)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 15));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Angle30)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 30));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Angle45)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 45));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Angle60)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 60));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Angle90)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 90));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Positive90Negative90)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, -90));
+            else if ((ObjectOrientation)send.Tag == ObjectOrientation.Mirror)
+                SetNewOrientation(COrientation.CreateOrientation((ObjectOrientation)send.Tag, 180));
         }
         #endregion
 
