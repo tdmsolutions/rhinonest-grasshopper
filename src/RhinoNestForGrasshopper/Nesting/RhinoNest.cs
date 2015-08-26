@@ -330,7 +330,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 //add every object to a buffer for put on the output
                 _buffOut.Add( new List<RhinoNestObject>());
                 for (int i = 0; i < objresult.Count; i++)
-                {//TODO asegurar que funciona a qui se pasaba la curva externa
+                {
                     _buffOut[_tryies].Add(new RhinoNestObject(curves[i]));
                 }
 
