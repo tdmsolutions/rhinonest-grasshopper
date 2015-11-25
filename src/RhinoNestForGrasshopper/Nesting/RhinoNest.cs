@@ -359,11 +359,8 @@ namespace RhinoNestForGrasshopper.Nesting
                 _sheetsresults.Add(new RhinoNestSheetResult(rnProject, objs));
 
                 //get the bound for print if it isn't the first sheet and print it  if is the first don't print the sheet
-                if (_tryies != 0)
-                {
-                    var print = _sheets2.GetBounds();
-                    _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddPolyline(print));
-                }
+                var print = _sheets2.GetBounds();
+                _mycurves.Add(RhinoDoc.ActiveDoc.Objects.AddPolyline(print));
                 //add trie for the next time
                 _tryies++;
 
