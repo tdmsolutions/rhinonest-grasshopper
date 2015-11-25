@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using Grasshopper.GUI;
+﻿using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Attributes;
@@ -11,6 +6,11 @@ using Rhino;
 using Rhino.Geometry;
 using RhinoNestForGrasshopper.Properties;
 using RhinoNestKernel.Nesting;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace RhinoNestForGrasshopper.Nesting
 {
@@ -19,10 +19,12 @@ namespace RhinoNestForGrasshopper.Nesting
     /// </summary>
     public class RhinoNestComponentAttributes : GH_ComponentAttributes
     {
+        private const int SPINNER_SIZE = 32;
+
+        private const int SPINNER_THICKNESS = 5;
+
         //Delcaration var for the spiner
         private float _spinnerAngle;
-        private const int SPINNER_SIZE = 32;
-        private const int SPINNER_THICKNESS = 5;
 
         /// <summary>
         /// Constructor
@@ -87,13 +89,13 @@ namespace RhinoNestForGrasshopper.Nesting
                 //render the sing of TDM Solutions
                 if ((iCanvas.Viewport.IsVisible(ref pointer, 5.0f)))
                 {
-                    var pt = new PointF(0.5f*(Bounds.Left + Bounds.Right), Bounds.Top);
+                    var pt = new PointF(0.5f * (Bounds.Left + Bounds.Right), Bounds.Top);
                     GH_GraphicsUtil.RenderBalloonTag(iCanvas.Graphics, "TDM solutions", pt,
                         iCanvas.Viewport.VisibleRegion);
                 }
 
-                //if it's working render the spiner 
-                if (((RhinoNest) Owner).IsWorking)
+                //if it's working render the spiner
+                if (((RhinoNest)Owner).IsWorking)
                 {
                     var ptSpinner = new PointF(0.5f * (Bounds.Left + Bounds.Right), Bounds.Top);
                     graphics.DrawArc(new Pen(Color.SteelBlue, SPINNER_THICKNESS), ptSpinner.X - (SPINNER_SIZE / 2), ptSpinner.Y - (Bounds.Height / 2) - SPINNER_SIZE, SPINNER_SIZE, SPINNER_SIZE, 0, _spinnerAngle);
@@ -103,7 +105,6 @@ namespace RhinoNestForGrasshopper.Nesting
             }
             base.Render(iCanvas, graphics, iChannel);
         }
-        
     }
 
     /// <summary>
@@ -112,22 +113,24 @@ namespace RhinoNestForGrasshopper.Nesting
     public class RhinoNest : GH_Component
     {
         #region definitions
+
+        public bool _mSolveme;
         private readonly List<List<RhinoNestObject>> _buffOut = new List<List<RhinoNestObject>>();
         private readonly List<RhinoNestObject> _nonest = new List<RhinoNestObject>();
+        private readonly List<Guid> _mycurves = new List<Guid>();
         private RhinoNestNesting _nesting;
-        
+
         private RhinoNestKernel.Nesting.RhinoNestNestingParameters _parameters;
         private bool _setOutput;
-        public bool _mSolveme;
-
         private RhinoNestSheet _sheets2;
         private int _tryies;
-        private readonly List<Guid> _mycurves = new List<Guid>();
         private Int32 _buffold;
         private List<RhinoNestSheetResult> _sheetsresults;
-        #endregion
+
+        #endregion definitions
 
         #region DeclarationObjectItems
+
         /// <summary>
         /// Initializes a new instance of the RhinoNest class.
         /// </summary>
@@ -136,18 +139,6 @@ namespace RhinoNestForGrasshopper.Nesting
                 "Main component for nesting",
                 "RhinoNest", "Nesting")
         {
-        }
-
-        /// <summary>
-        /// Provides an Icon for the component.
-        /// </summary>
-        protected override Bitmap Icon
-        {
-            get
-            {
-                //You can add image files to your project resources and access them like this:
-                return Resources.IconRhinoNestNesting;
-            }
         }
 
         /// <summary>
@@ -162,6 +153,18 @@ namespace RhinoNestForGrasshopper.Nesting
         /// Het and set for IsWorking boolean
         /// </summary>
         public bool IsWorking { get; set; }
+
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
+        protected override Bitmap Icon
+        {
+            get
+            {
+                //You can add image files to your project resources and access them like this:
+                return Resources.IconRhinoNestNesting;
+            }
+        }
 
         /// <summary>
         /// Create the Attibute for double click
@@ -197,15 +200,6 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
-        /// This is the method that send again the solveInstance.
-        /// </summary>
-        /// <param name="doc">GH_Document: Represent a single Grasshopper document.</param>
-        private void MyCallback(GH_Document doc)
-        {
-            ExpireSolution(false);
-        }
-
-        /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
         /// <param name="da">IGH_DataAccess: The DA object is used to retrieve from inputs and store in outputs.</param>
@@ -214,9 +208,9 @@ namespace RhinoNestForGrasshopper.Nesting
             // _setOutput put var to the exit
             if (_setOutput)
             {
-                for (int a = _buffOut.Count-1; a >0; a--)
+                for (int a = _buffOut.Count - 1; a > 0; a--)
                 {
-                    if (_buffOut[a].Count==0)
+                    if (_buffOut[a].Count == 0)
                         _buffOut.RemoveAt(a);
                 }
 
@@ -241,11 +235,11 @@ namespace RhinoNestForGrasshopper.Nesting
             if (!IsWorking)
             {
                 //if have curves delete all
-                if (_mycurves.Count>0)
+                if (_mycurves.Count > 0)
                 {
                     foreach (Guid t in _mycurves)
                     {
-                        RhinoDoc.ActiveDoc.Objects.Delete(t,true);
+                        RhinoDoc.ActiveDoc.Objects.Delete(t, true);
                     }
                     RhinoDoc.ActiveDoc.Views.Redraw();
                 }
@@ -259,9 +253,9 @@ namespace RhinoNestForGrasshopper.Nesting
                 _tryies = 0;
                 _nonest.Clear();
 
-                for (int i=0;i<_buffOut.Count;i++)
+                for (int i = 0; i < _buffOut.Count; i++)
                     _buffOut.RemoveAt(i);
-                
+
                 //getting var
                 if (!da.GetDataList(0, _object)) return;
                 if (!da.GetData(1, ref sheets)) return;
@@ -271,31 +265,42 @@ namespace RhinoNestForGrasshopper.Nesting
                 _sheets2 = new RhinoNestSheet(sheets);
 
                 //duplicate the list
-                var send= new List<RhinoNestObject>();
+                var send = new List<RhinoNestObject>();
                 _object.ForEach(item => send.Add(new RhinoNestObject(item)));
 
                 //declaring nesting
                 _nesting = new RhinoNestNesting(send, sheets, _parameters);
 
-                //active the Flag for the event for finish and other for progress 
+                //active the Flag for the event for finish and other for progress
                 _nesting.OnNestingFinish += nesting_OnNestingFinish;
                 _nesting.OnNestingProgressChange += Nesting_OnNestingProgressChange;
 
                 //start nesting
                 _nesting.StartNesting();
-
             }
         }
-        #endregion
+
+        /// <summary>
+        /// This is the method that send again the solveInstance.
+        /// </summary>
+        /// <param name="doc">GH_Document: Represent a single Grasshopper document.</param>
+        private void MyCallback(GH_Document doc)
+        {
+            ExpireSolution(false);
+        }
+
+        #endregion DeclarationObjectItems
+
         #region Events
+
         /// <summary>
         /// Event for the procces of spiner
         /// </summary>
         /// <param name="sender"> object: Support all classes in the .NET Framework class hierachy and provides low-level service to derived classes.</param>
         /// <param name="e"> RhinoNestEventArgs: Class used in events.</param>
-        void Nesting_OnNestingProgressChange(object sender, RhinoNestEventArgs e)
+        private void Nesting_OnNestingProgressChange(object sender, RhinoNestEventArgs e)
         {
-             Grasshopper.Instances.ActiveCanvas.ScheduleRegen(2);
+            Grasshopper.Instances.ActiveCanvas.ScheduleRegen(2);
         }
 
         /// <summary>
@@ -305,7 +310,7 @@ namespace RhinoNestForGrasshopper.Nesting
         /// <param name="e"> RhinoNestEventArgs: Class used in events.</param>
         private void nesting_OnNestingFinish(object sender, EventArgs e)
         {
-            //For the nestet objects
+            //For the nested objects
             if (_nesting.NestingResult.NestedObjects != null)
             {
                 var listguid = new List<Guid>();
@@ -313,7 +318,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 var objresult = _nesting.NestingResult.NestedObjects;
                 var nestedGeometry2 = new RhinoNestObject[objresult.Count];
                 var objtrans = new Transform[objresult.Count];
-                
+
                 //get the objects
                 objresult.Keys.CopyTo(nestedGeometry2, 0);
                 objresult.Values.CopyTo(objtrans, 0);
@@ -323,23 +328,30 @@ namespace RhinoNestForGrasshopper.Nesting
                 for (int i = 0; i < objresult.Count; i++)
                 {
                     curves.Add(nestedGeometry2[i].ExternalCurve.DuplicateCurve());
+
+                    foreach (var id in nestedGeometry2[i].SubObjectsIds)
+                    {
+                        listguid.Add(RhinoDoc.ActiveDoc.Objects.Transform(id, objtrans[i], false));
+                    }
+
                     curves[i].Transform(objtrans[i]);
+
                     listguid.Add(RhinoDoc.ActiveDoc.Objects.AddCurve(curves[i]));
                 }
                 _mycurves.AddRange(listguid);
                 //add every object to a buffer for put on the output
-                _buffOut.Add( new List<RhinoNestObject>());
+                _buffOut.Add(new List<RhinoNestObject>());
                 for (int i = 0; i < objresult.Count; i++)
                 {
                     _buffOut[_tryies].Add(new RhinoNestObject(curves[i]));
                 }
 
-                //create var for make the report 
+                //create var for make the report
                 var rnProject = new RhinoNestProject(_nesting.NestingResult, _sheets2);
                 var objs = new List<Tuple<RhinoNestObject, Transform, List<Guid>>>();
                 for (int i = 0; i < _nesting.NestingResult.NestedObjects.Count; i++)
                 {
-                    var guids = new List<Guid> {listguid[i]};
+                    var guids = new List<Guid> { listguid[i] };
                     var tup = new Tuple<RhinoNestObject, Transform, List<Guid>>(nestedGeometry2[i], objtrans[i], guids);
                     objs.Add(tup);
                 }
@@ -364,7 +376,7 @@ namespace RhinoNestForGrasshopper.Nesting
             {
                 //get the remaining object and count how many is for nest
                 var send = _nesting.NestingResult.RemainingObjects;
-                Int32 count=0;
+                Int32 count = 0;
                 foreach (var item in send)
                 {
                     count = count + item.Parameters.RemainingCopies;
@@ -407,6 +419,7 @@ namespace RhinoNestForGrasshopper.Nesting
                 }
             }
         }
-        #endregion
+
+        #endregion Events
     }
 }
