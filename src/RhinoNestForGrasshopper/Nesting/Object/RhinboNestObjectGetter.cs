@@ -33,7 +33,7 @@ namespace RhinoNestForGrasshopper.Nesting.Object
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return Resources.IconRhinoNestObject;
+                return Resources.ICO_RN_Smart_Object;
             }
         }
 

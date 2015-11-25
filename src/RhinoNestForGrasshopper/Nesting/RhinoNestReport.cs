@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using RhinoNestForGrasshopper.Properties;
 using RhinoNestKernel.Nesting;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace RhinoNestForGrasshopper.Nesting
 {
     public class RhinoNestReport : GH_Component
     {
         private readonly List<RhinoNestSheetResult> _sheetsresults = new List<RhinoNestSheetResult>();
-        private List<string> _reportList = new List<string>(); 
+        private List<string> _reportList = new List<string>();
+
         /// <summary>
         ///     Initializes a new instance of the RhinoNestReport class.
         /// </summary>
@@ -22,6 +23,14 @@ namespace RhinoNestForGrasshopper.Nesting
         }
 
         /// <summary>
+        ///     Gets the unique ID for this component. Do not change this ID after release.
+        /// </summary>
+        public override Guid ComponentGuid
+        {
+            get { return new Guid("{4de7aef2-9b12-43d3-b2d1-792486f1f533}"); }
+        }
+
+        /// <summary>
         ///     Provides an Icon for the component.
         /// </summary>
         protected override Bitmap Icon
@@ -29,16 +38,8 @@ namespace RhinoNestForGrasshopper.Nesting
             get
             {
                 //You can add image files to your project resources and access them like this:
-                return Resources.IconRhinoNestReport;
+                return Resources.ICO_RN_Report;
             }
-        }
-
-        /// <summary>
-        ///     Gets the unique ID for this component. Do not change this ID after release.
-        /// </summary>
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("{4de7aef2-9b12-43d3-b2d1-792486f1f533}"); }
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace RhinoNestForGrasshopper.Nesting
         protected override void SolveInstance(IGH_DataAccess da)
         {
             da.GetDataList(0, _sheetsresults);
-            _reportList=new List<string>();
+            _reportList = new List<string>();
             int t = 1;
             foreach (var res in _sheetsresults)
             {
@@ -81,8 +82,8 @@ namespace RhinoNestForGrasshopper.Nesting
                 _reportList.AddRange(aux);
                 t++;
             }
-            
-           da.SetDataList(0, _reportList);
+
+            da.SetDataList(0, _reportList);
         }
     }
 }

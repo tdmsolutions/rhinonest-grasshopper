@@ -154,6 +154,12 @@
   <data name="IconSheetBySize" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\IconSheetBySize.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ICO_RN_Report" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ICO_RN_Report.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ICO_RN_Smart_Object" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ICO_RN_Smart_Object.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ImageSpinner" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\IMG_Spinner200.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
