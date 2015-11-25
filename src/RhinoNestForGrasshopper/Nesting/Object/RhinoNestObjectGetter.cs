@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace RhinoNestForGrasshopper.Nesting.Object
 {
-    public class RhinboNestObjectGetter : GH_Component
+    public class RhinoNestObjectGetter : GH_Component
     {
         /// <summary>
         /// Initializes a new instance of the RhinboNestObjectGetter class.
         /// </summary>
-        public RhinboNestObjectGetter()
+        public RhinoNestObjectGetter()
           : base("Smart Object", "so",
               "Multiple objects getter",
               "RhinoNest", "Nesting")
